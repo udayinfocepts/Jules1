@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Aggregator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="tab-container">
+        <div class="tab-nav">
+            <button class="tab-button active" onclick="openTab(event, 'chatgpt')">ChatGPT</button>
+            <button class="tab-button" onclick="openTab(event, 'gemini')">Gemini</button>
+            <button class="tab-button" onclick="openTab(event, 'grok')">Grok</button>
+            <button class="tab-button" onclick="openTab(event, 'claude')">Claude</button>
+        </div>
+
+        <div id="chatgpt" class="tab-content active">
+            <!-- Removed h2 and p, iframe should fill the space -->
+            <iframe src="https://chat.openai.com/"></iframe>
+        </div>
+
+        <div id="gemini" class="tab-content">
+            <iframe src="https://gemini.google.com/"></iframe>
+        </div>
+
+        <div id="grok" class="tab-content">
+            <iframe src="https://grok.x.ai/"></iframe>
+        </div>
+
+        <div id="claude" class="tab-content">
+            <iframe src="https://claude.ai/"></iframe>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
