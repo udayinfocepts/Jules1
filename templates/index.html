@@ -17,6 +17,28 @@
                     <textarea name="prompt" id="prompt" rows="3" required>{{ prompt_text if prompt_text else '' }}</textarea>
                     <input type="submit" value="Ask my AIs">
                 </div>
+
+                <div class="model-selectors-container">
+                    <div class="model-selector-group">
+                        <label for="gemini_model_select">Gemini Model:</label>
+                        <select name="gemini_model_select" id="gemini_model_select">
+                            {% if gemini_models %}
+                                {% for model in gemini_models %}
+                                    <option value="{{ model.id }}" {% if model.id == current_gemini_model %}selected{% endif %}>
+                                        {{ model.display_name }} ({{ model.id | replace("models/", "") }})
+                                    </option>
+                                {% endfor %}
+                            {% else %}
+                                <option value="{{ DEFAULT_GEMINI_MODEL if DEFAULT_GEMINI_MODEL else '' }}">Default (Error loading list)</option>
+                            {% endif %}
+                        </select>
+                        {% if gemini_list_error %}
+                            <span class="error-text model-list-error-inline">{{ gemini_list_error }}</span>
+                        {% endif %}
+                    </div>
+                    <!-- Placeholder for OpenAI model selector -->
+                    <!-- Placeholder for Claude model selector -->
+                </div>
             </form>
         </div>
     </header>
@@ -32,7 +54,7 @@
         <div class="response-container">
             {# Gemini Response Area - Always Visible #}
             <div class="response-area">
-                <h3><span class="ai-label gemini-label">Gemini</span> ({{ gemini_model }}):</h3>
+                <h3><span class="ai-label gemini-label">Gemini</span> Model: ({{ current_gemini_model | replace("models/", "") }})</h3>
                 {% if gemini_response and not "Error:" in gemini_response and not "An error occurred:" in gemini_response and not "API key not configured" in gemini_response %}
                     <p>{{ gemini_response }}</p>
                 {% elif gemini_response %} {# Implies it's an error message from the client or app.py #}

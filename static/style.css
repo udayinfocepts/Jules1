@@ -198,6 +198,79 @@ h2 { /* General sub-headings, if any are used outside response areas */
     /* background-color: #333333; */ /* Optional: subtle background on hover */
 }
 
+/* --- Model Selector Styles --- */
+.model-selectors-container {
+    display: flex;
+    flex-direction: column; /* Stack each AI's model selector group vertically */
+    gap: 15px; /* Space between different AI model selector groups */
+    margin-top: 15px; /* Space above the first model selector group */
+    padding: 10px;
+    background-color: #252525; /* Slightly different background for this section */
+    border-radius: 6px;
+    border: 1px solid #383838;
+}
+
+.model-selector-group {
+    display: flex;
+    flex-direction: row; /* Label and select on the same line */
+    align-items: center;
+    gap: 10px; /* Space between label and select */
+}
+
+.model-selector-group label {
+    color: #bbbbbb;
+    font-weight: 500;
+    font-size: 0.9em;
+    margin-bottom: 0; /* Reset default label margin */
+    white-space: nowrap;
+}
+
+.model-selector-group select {
+    flex-grow: 1; /* Select takes available space */
+    padding: 8px 10px;
+    background-color: #2c2c2c; /* Darker background for select */
+    color: #e0e0e0; /* Light text in select */
+    border: 1px solid #444;
+    border-radius: 5px;
+    font-size: 0.9em;
+    min-width: 200px; /* Minimum width for the dropdown */
+}
+.model-selector-group select:focus {
+    border-color: #007bff; /* Accent color on focus */
+    outline: none;
+    box-shadow: 0 0 5px rgba(0,123,255,0.3);
+}
+
+.model-list-error-inline {
+    font-size: 0.85em;
+    color: #ef5350; /* Light red for errors, consistent with .config-nok */
+    margin-left: 5px; /* Space from the select box */
+}
+
+/* Adjustments to ensure the response header (H3) where model name is now shown looks okay */
+.response-area .response-header {
+    display: flex;
+    justify-content: space-between; /* Puts H3 (label) left, model name right if it were separate */
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px; /* Space before the actual response/placeholder/error text */
+}
+
+/* The H3 within response-header now only contains the AI label + static text "Model:" */
+/* The actual dynamic model name is part of the text content of H3 */
+.response-area .response-header h3 {
+    margin-bottom: 0; /* Remove bottom margin from h3 as .response-header has it */
+    padding-bottom: 0; /* Remove bottom padding from h3 */
+    border-bottom: none; /* Remove border from h3 as it's just a title within the header */
+    display: flex; /* Keep flex for AI label and text */
+    align-items: center; /* Keep alignment */
+    /* color: #cccccc; already set */
+    /* font-size: 18px; already set */
+}
+
+/* If the model name (current_gemini_model) is part of the H3 text: */
+/* No extra styling needed for the model name text itself unless desired */
+
 /* --- Toast Notification Styles --- */
 .toast-container {
     position: fixed;
