@@ -200,14 +200,17 @@ h2 { /* General sub-headings, if any are used outside response areas */
 
 /* --- Model Selector Styles --- */
 .model-selectors-container {
-    display: flex;
-    flex-direction: column; /* Stack each AI's model selector group vertically */
-    gap: 15px; /* Space between different AI model selector groups */
-    margin-top: 15px; /* Space above the first model selector group */
-    padding: 10px;
-    background-color: #252525; /* Slightly different background for this section */
-    border-radius: 6px;
-    border: 1px solid #383838;
+    /* This container now primarily holds hidden inputs or will hold future form-based selectors. */
+    /* For now, let's make it take no visual space if it only holds hidden inputs */
+    padding: 0;
+    margin: 0; /* Will be spaced by #promptForm's gap if it's a flex item */
+    border: none;
+    background-color: transparent;
+    /* If it were to contain visible selectors again: */
+    /* display: flex; */
+    /* flex-direction: column; */
+    /* gap: 15px; */
+    /* margin-top: 15px; */ /* Or rely on #promptForm gap */
 }
 
 .model-selector-group {
@@ -254,22 +257,25 @@ h2 { /* General sub-headings, if any are used outside response areas */
     align-items: center;
     width: 100%;
     margin-bottom: 10px; /* Space before the actual response/placeholder/error text */
+    /* border-bottom: 1px solid #444; */ /* Optional: if a line is desired under the whole header */
+    /* padding-bottom: 10px; */      /* Optional */
 }
 
-/* The H3 within response-header now only contains the AI label + static text "Model:" */
-/* The actual dynamic model name is part of the text content of H3 */
+/* The H3 within response-header now only contains the AI label */
 .response-area .response-header h3 {
-    margin-bottom: 0; /* Remove bottom margin from h3 as .response-header has it */
-    padding-bottom: 0; /* Remove bottom padding from h3 */
-    border-bottom: none; /* Remove border from h3 as it's just a title within the header */
-    display: flex; /* Keep flex for AI label and text */
-    align-items: center; /* Keep alignment */
-    /* color: #cccccc; already set */
-    /* font-size: 18px; already set */
+    margin-bottom: 0; 
+    padding-bottom: 0; 
+    border-bottom: none; 
+    display: flex; 
+    align-items: center; 
+    margin-right: auto; /* Push model selector to the right if space-between is not enough */
 }
 
-/* If the model name (current_gemini_model) is part of the H3 text: */
-/* No extra styling needed for the model name text itself unless desired */
+/* Styling for the model-selector-group now within the response-header */
+.response-area .response-header .model-selector-group {
+    margin-left: 15px; /* Space from the H3 title */
+    /* Existing .model-selector-group styles (flex, align-items, gap) will apply */
+}
 
 /* --- Toast Notification Styles --- */
 .toast-container {

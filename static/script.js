@@ -54,3 +54,20 @@ function showToast(message, type = 'error', duration = 5000) {
         }, 500); // Matches CSS transition time
     }, duration);
 }
+
+// --- Gemini Model Selector Sync ---
+document.addEventListener('DOMContentLoaded', function() {
+    const visualGeminiSelect = document.getElementById('gemini_model_select_visual');
+    const hiddenGeminiInput = document.getElementById('gemini_model_select_hidden');
+
+    if (visualGeminiSelect && hiddenGeminiInput) {
+        // Initialize hidden field with the current value of the visual select
+        // (which should be correctly pre-selected by Jinja via current_gemini_model)
+        hiddenGeminiInput.value = visualGeminiSelect.value;
+
+        // Add event listener for changes on the visual select
+        visualGeminiSelect.addEventListener('change', function() {
+            hiddenGeminiInput.value = this.value;
+        });
+    }
+});

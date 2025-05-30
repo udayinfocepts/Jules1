@@ -12,32 +12,15 @@
             <h1>Uday's AI Agents</h1>
             <span id="openApiStatusModal" class="api-status-icon-button" title="View API Configuration Status">⚙️</span>
             <form action="/get_response" method="post" id="promptForm">
-                <label for="prompt">Enter your common prompt:</label>
                 <div class="input-button-wrapper">
-                    <textarea name="prompt" id="prompt" rows="3" required>{{ prompt_text if prompt_text else '' }}</textarea>
+                    <textarea name="prompt" id="prompt" rows="3" required placeholder="Enter your common prompt for all AIs here...">{{ prompt_text if prompt_text else '' }}</textarea>
                     <input type="submit" value="Ask my AIs">
                 </div>
 
                 <div class="model-selectors-container">
-                    <div class="model-selector-group">
-                        <label for="gemini_model_select">Gemini Model:</label>
-                        <select name="gemini_model_select" id="gemini_model_select">
-                            {% if gemini_models %}
-                                {% for model in gemini_models %}
-                                    <option value="{{ model.id }}" {% if model.id == current_gemini_model %}selected{% endif %}>
-                                        {{ model.display_name }} ({{ model.id | replace("models/", "") }})
-                                    </option>
-                                {% endfor %}
-                            {% else %}
-                                <option value="{{ DEFAULT_GEMINI_MODEL if DEFAULT_GEMINI_MODEL else '' }}">Default (Error loading list)</option>
-                            {% endif %}
-                        </select>
-                        {% if gemini_list_error %}
-                            <span class="error-text model-list-error-inline">{{ gemini_list_error }}</span>
-                        {% endif %}
-                    </div>
-                    <!-- Placeholder for OpenAI model selector -->
-                    <!-- Placeholder for Claude model selector -->
+                    <!-- Hidden input for actual form submission -->
+                    <input type="hidden" name="gemini_model_select" id="gemini_model_select_hidden">
+                    <!-- Placeholder for other AI model selectors if they remain in form -->
                 </div>
             </form>
         </div>
@@ -54,7 +37,26 @@
         <div class="response-container">
             {# Gemini Response Area - Always Visible #}
             <div class="response-area">
-                <h3><span class="ai-label gemini-label">Gemini</span> Model: ({{ current_gemini_model | replace("models/", "") }})</h3>
+                <div class="response-header">
+                    <h3><span class="ai-label gemini-label">Gemini</span></h3>
+                    <div class="model-selector-group">
+                        <label for="gemini_model_select_visual">Model:</label> <!-- Simplified label -->
+                        <select name="gemini_model_select_visual" id="gemini_model_select_visual" data-current-model="{{ current_gemini_model }}">
+                            {% if gemini_models %}
+                                {% for model in gemini_models %}
+                                    <option value="{{ model.id }}" {% if model.id == current_gemini_model %}selected{% endif %}>
+                                        {{ model.display_name }} ({{ model.id | replace("models/", "") }})
+                                    </option>
+                                {% endfor %}
+                            {% else %}
+                                <option value="{{ DEFAULT_GEMINI_MODEL if DEFAULT_GEMINI_MODEL else '' }}">Default (Error loading list)</option>
+                            {% endif %}
+                        </select>
+                        {% if gemini_list_error %}
+                            <span class="error-text model-list-error-inline">{{ gemini_list_error }}</span>
+                        {% endif %}
+                    </div>
+                </div>
                 {% if gemini_response and not "Error:" in gemini_response and not "An error occurred:" in gemini_response and not "API key not configured" in gemini_response %}
                     <p>{{ gemini_response }}</p>
                 {% elif gemini_response %} {# Implies it's an error message from the client or app.py #}
@@ -66,7 +68,7 @@
 
             {# OpenAI Response Area - Always Visible #}
             <div class="response-area">
-                <h3><span class="ai-label openai-label">OpenAI</span> ({{ openai_model }}):</h3>
+                <h3><span class="ai-label openai-label">OpenAI</span> Model: ({{ openai_model_display | replace("models/", "") }})</h3>
                 {% if openai_response and not "Error:" in openai_response and not "An unexpected error occurred with OpenAI:" in openai_response and not "OpenAI AuthenticationError:" in openai_response and not "OpenAI RateLimitError:" in openai_response and not "OpenAI APIConnectionError:" in openai_response and not "API key not configured" in openai_response %}
                     <p>{{ openai_response }}</p>
                 {% elif openai_response %} {# Implies it's an error message from the client or app.py #}
@@ -78,7 +80,7 @@
             
             {# Claude Response Area - Always Visible #}
             <div class="response-area">
-                <h3><span class="ai-label claude-label">Claude</span> ({{ claude_model }}):</h3>
+                <h3><span class="ai-label claude-label">Claude</span> Model: ({{ claude_model_display | replace("models/", "") | replace("claude-3-haiku-","c3-haiku-") }})</h3>
                 {% if claude_response and not "Error:" in claude_response and not "An unexpected error occurred with Anthropic:" in claude_response and not "Anthropic AuthenticationError:" in claude_response and not "Anthropic RateLimitError:" in claude_response and not "Anthropic APIConnectionError:" in claude_response and not "API key not configured" in claude_response %}
                     <p>{{ claude_response }}</p>
                 {% elif claude_response %} {# Implies it's an error message from the client or app.py #}
