@@ -1,3 +1,4 @@
 Flask>=2.0
 google-generativeai>=0.4
-openai>=1.0  # Or a recent appropriate version
+openai>=1.0
+anthropic>=0.20 # Or a recent appropriate version
