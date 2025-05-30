@@ -68,7 +68,7 @@
 
             {# OpenAI Response Area - Always Visible #}
             <div class="response-area">
-                <h3><span class="ai-label openai-label">OpenAI</span> Model: ({{ openai_model_display | replace("models/", "") }})</h3>
+                <h3><span class="ai-label openai-label">OpenAI</span> ({{ openai_model_display | replace("models/", "") }})</h3>
                 {% if openai_response and not "Error:" in openai_response and not "An unexpected error occurred with OpenAI:" in openai_response and not "OpenAI AuthenticationError:" in openai_response and not "OpenAI RateLimitError:" in openai_response and not "OpenAI APIConnectionError:" in openai_response and not "API key not configured" in openai_response %}
                     <p>{{ openai_response }}</p>
                 {% elif openai_response %} {# Implies it's an error message from the client or app.py #}
@@ -80,7 +80,7 @@
             
             {# Claude Response Area - Always Visible #}
             <div class="response-area">
-                <h3><span class="ai-label claude-label">Claude</span> Model: ({{ claude_model_display | replace("models/", "") | replace("claude-3-haiku-","c3-haiku-") }})</h3>
+                <h3><span class="ai-label claude-label">Claude</span> ({{ claude_model_display | replace("models/", "") | replace("claude-3-haiku-","c3-haiku-") }})</h3>
                 {% if claude_response and not "Error:" in claude_response and not "An unexpected error occurred with Anthropic:" in claude_response and not "Anthropic AuthenticationError:" in claude_response and not "Anthropic RateLimitError:" in claude_response and not "Anthropic APIConnectionError:" in claude_response and not "API key not configured" in claude_response %}
                     <p>{{ claude_response }}</p>
                 {% elif claude_response %} {# Implies it's an error message from the client or app.py #}
