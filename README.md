@@ -79,11 +79,11 @@ This application, "Uday's AI Agents," provides a simple, dark-themed web interfa
 5.  **Use the App:**
     *   The application features a dark theme and a compact header for input.
     *   To check the status of your API key configurations, click the gear icon (⚙️) in the top-right. This will open a modal dialog.
-    *   **Gemini Model Selection:** Within the header of the Gemini response box, next to the "Gemini" label, you will find a dropdown menu.
-        *   This dropdown is populated dynamically with available Gemini models that support text generation, fetched when the page loads (if your Gemini API key is correctly configured).
+    *   **Gemini Model Selection:** Within the header of the Gemini response box, positioned directly below the 'Gemini' label, you will find a dropdown menu.
+        *   This dropdown is populated dynamically with available Gemini models. A suitable default model (often a current 'flash' version) is intelligently pre-selected.
         *   If there's an issue fetching the list (e.g., API key problem), an error message will appear next to the dropdown, and it may show a default model.
         *   Select your desired Gemini model from this list. The chosen model will be used for the next query you make.
-        *   The header of the Gemini response box will also display the name of the model that was used (based on your selection).
+        *   The Gemini response box header (e.g., "Gemini (gemini-1.5-flash-latest)") will reflect the model used for the query.
     *   Enter your common prompt directly into the large text area at the top of the page (it uses placeholder text like "Enter your common prompt for all AIs here..." for guidance). The "Ask my AIs" button is located to the right of this input area.
     *   Click "Ask my AIs".
     *   If there are errors (e.g., an API key issue for a specific service), they will appear as temporary toast notifications, typically at the bottom-right of the screen.

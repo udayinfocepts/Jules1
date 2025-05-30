@@ -215,12 +215,14 @@ h2 { /* General sub-headings, if any are used outside response areas */
 
 .model-selector-group {
     display: flex;
-    flex-direction: row; /* Label and select on the same line */
-    align-items: center;
-    gap: 10px; /* Space between label and select */
+    align-items: center; 
+    gap: 10px;
+    width: 100%; /* Make the group take full width of its container in the column */
+    /* margin-top: 5px; */ /* Optional: if h3 margin-bottom isn't enough */
 }
 
 .model-selector-group label {
+    flex-shrink: 0; /* Prevent label from shrinking */
     color: #bbbbbb;
     font-weight: 500;
     font-size: 0.9em;
@@ -229,7 +231,9 @@ h2 { /* General sub-headings, if any are used outside response areas */
 }
 
 .model-selector-group select {
-    flex-grow: 1; /* Select takes available space */
+    flex-grow: 1; /* Allows select to take up available space from label and error */
+    min-width: 150px; /* Ensure it's not too small */
+    max-width: 100%;  /* Allow it to take up to full width of its parent group */
     padding: 8px 10px;
     background-color: #2c2c2c; /* Darker background for select */
     color: #e0e0e0; /* Light text in select */
@@ -248,33 +252,34 @@ h2 { /* General sub-headings, if any are used outside response areas */
     font-size: 0.85em;
     color: #ef5350; /* Light red for errors, consistent with .config-nok */
     margin-left: 5px; /* Space from the select box */
+    flex-shrink: 1; /* Allow error to shrink or wrap if needed */
+    /* white-space: normal; */ /* Ensure it can wrap if needed */
 }
 
 /* Adjustments to ensure the response header (H3) where model name is now shown looks okay */
 .response-area .response-header {
     display: flex;
-    justify-content: space-between; /* Puts H3 (label) left, model name right if it were separate */
-    align-items: center;
-    width: 100%;
-    margin-bottom: 10px; /* Space before the actual response/placeholder/error text */
-    /* border-bottom: 1px solid #444; */ /* Optional: if a line is desired under the whole header */
-    /* padding-bottom: 10px; */      /* Optional */
+    flex-direction: column; /* Stack h3 (AI Label) and model-selector-group vertically */
+    align-items: flex-start; /* Align items to the start (left) of the column */
+    width: 100%;             /* Header takes full width of its response area */
+    margin-bottom: 10px;     /* Existing space below the header */
 }
 
 /* The H3 within response-header now only contains the AI label */
 .response-area .response-header h3 {
-    margin-bottom: 0; 
+    /* display: flex; align-items: center; are still good for the inner AI label span */
+    margin-right: 0;      /* Was for side-by-side, remove or ensure 0 */
+    margin-bottom: 8px;   /* Space between H3 (AI Label) and the model selector group below it */
     padding-bottom: 0; 
     border-bottom: none; 
     display: flex; 
     align-items: center; 
-    margin-right: auto; /* Push model selector to the right if space-between is not enough */
 }
 
 /* Styling for the model-selector-group now within the response-header */
 .response-area .response-header .model-selector-group {
-    margin-left: 15px; /* Space from the H3 title */
-    /* Existing .model-selector-group styles (flex, align-items, gap) will apply */
+    /* Existing .model-selector-group styles (flex, align-items, gap, width:100%) will apply */
+    /* No specific overrides needed here if general .model-selector-group is correct */
 }
 
 /* --- Toast Notification Styles --- */
