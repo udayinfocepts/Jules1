@@ -1,6 +1,6 @@
 # Uday's AI Agents
 
-This application, "Uday's AI Agents," provides a simple, dark-themed web interface to query Google Gemini, OpenAI (ChatGPT), and Anthropic Claude APIs with a single prompt. It then displays the responses from each AI side-by-side in a clean, professional layout.
+This application, "Uday's AI Agents," provides a simple, dark-themed web interface to query Google Gemini, OpenAI (ChatGPT), and Anthropic Claude APIs with a single prompt. It then displays the responses from each AI side-by-side in a clean, professional layout with a refined, compact input header.
 
 ## Prerequisites
 
@@ -77,10 +77,11 @@ This application, "Uday's AI Agents," provides a simple, dark-themed web interfa
     Navigate to `http://127.0.0.1:5000/`.
 
 5.  **Use the App:**
-    *   The application features a dark theme.
-    *   To check the status of your API key configurations, click the "View API Configuration Status" button. This will open a modal dialog showing which AIs are configured.
-    *   Enter your common prompt in the text area.
-    *   Click "Get Responses from AIs".
+    *   The application features a dark theme and a compact header for input.
+    *   To check the status of your API key configurations, click the gear icon (⚙️) in the top-right. This will open a modal dialog.
+    *   Enter your common prompt in the text area. The "Ask my AIs" button is located to the right of this input area.
+    *   Click "Ask my AIs".
+    *   If there are errors (e.g., an API key issue for a specific service), they will appear as temporary toast notifications, typically at the bottom-right of the screen.
     *   Responses from Gemini, OpenAI, and Claude (if configured and successful) will be displayed in their respective static content boxes, each featuring a styled label.
 
 ## Project Structure
@@ -90,7 +91,7 @@ This application, "Uday's AI Agents," provides a simple, dark-themed web interfa
 *   `openai_client.py`: Client for OpenAI API.
 *   `claude_client.py`: Client for Anthropic Claude API.
 *   `templates/index.html`: HTML template for the UI.
-*   `static/script.js`: JavaScript for UI interactions (like the API status modal).
-*   `static/style.css`: CSS styles for the application.
+*   `static/script.js`: JavaScript for UI interactions (modal, toast notifications).
+*   `static/style.css`: CSS for styling the application.
 *   `requirements.txt`: Python dependencies.
 *   `README.md`: This file.
