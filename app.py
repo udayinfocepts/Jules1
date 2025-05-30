@@ -1,53 +1,79 @@
 from flask import Flask, render_template, request
-from gemini_client import get_gemini_response, API_KEY # Import API_KEY to check configuration
+import os
+
+# Import from our AI client modules
+from gemini_client import get_gemini_response, API_KEY as GEMINI_API_KEY, MODEL_NAME as GEMINI_MODEL_NAME
+from openai_client import get_openai_response, OPENAI_API_KEY_DIRECT, MODEL_NAME as OPENAI_MODEL_NAME
 
 app = Flask(__name__)
 
+def check_gemini_config():
+    return GEMINI_API_KEY != 'YOUR_API_KEY'
+
+def check_openai_config():
+    return os.getenv('OPENAI_API_KEY') is not None or OPENAI_API_KEY_DIRECT != 'YOUR_OPENAI_API_KEY'
+
 @app.route('/', methods=['GET'])
 def index():
-    api_key_configured = API_KEY != 'YOUR_API_KEY'
-    return render_template('index.html', api_key_not_configured=not api_key_configured)
+    gemini_configured = check_gemini_config()
+    openai_configured = check_openai_config()
+    return render_template('index.html', 
+                           gemini_configured=gemini_configured,
+                           openai_configured=openai_configured,
+                           gemini_model=GEMINI_MODEL_NAME,
+                           openai_model=OPENAI_MODEL_NAME)
 
 @app.route('/get_response', methods=['POST'])
 def get_response_route():
-    api_key_configured = API_KEY != 'YOUR_API_KEY'
-    if not api_key_configured:
-        return render_template('index.html', 
-                               error="API Key not configured on the server. Please ask the administrator to set it up.",
-                               api_key_not_configured=True)
-
+    gemini_configured = check_gemini_config()
+    openai_configured = check_openai_config()
+    
     prompt = request.form.get('prompt')
     if not prompt:
         return render_template('index.html', 
                                error="Prompt cannot be empty.", 
                                prompt_text=prompt,
-                               api_key_not_configured=False)
+                               gemini_configured=gemini_configured,
+                               openai_configured=openai_configured,
+                               gemini_model=GEMINI_MODEL_NAME,
+                               openai_model=OPENAI_MODEL_NAME)
 
-    # Call the function from gemini_client.py
-    gemini_response = get_gemini_response(prompt)
+    gemini_response_text = None
+    openai_response_text = None
+    error_messages = []
 
-    # Check if the response indicates an API key configuration error from the client script itself
-    if "Error: API_KEY has not been configured" in gemini_response:
-         return render_template('index.html',
-                               error=gemini_response, # Show the specific error from gemini_client
-                               prompt_text=prompt,
-                               api_key_not_configured=True) # Treat as not configured
-    elif "An error occurred:" in gemini_response: # General error from gemini_client
-        return render_template('index.html',
-                               error=gemini_response,
-                               prompt_text=prompt,
-                               api_key_not_configured=False)
-    
+    if not gemini_configured:
+        error_messages.append("Gemini API key not configured in gemini_client.py.")
+    else:
+        gemini_response_text = get_gemini_response(prompt)
+        if "Error:" in gemini_response_text or "An error occurred:" in gemini_response_text : # Check for errors from client
+            error_messages.append(f"Gemini: {gemini_response_text}")
+            # Potentially set gemini_response_text to None or keep error to display it
+            # For now, we'll let the error message be the response text for that AI
+
+    if not openai_configured:
+        error_messages.append("OpenAI API key not configured in openai_client.py or as ENV variable.")
+    else:
+        openai_response_text = get_openai_response(prompt) # Assumes openai_client handles its own key internally
+        if "Error:" in openai_response_text or "An unexpected error occurred with OpenAI:" in openai_response_text or "OpenAI AuthenticationError:" in openai_response_text or "OpenAI RateLimitError:" in openai_response_text or "OpenAI APIConnectionError:" in openai_response_text: # Check for errors from client
+            error_messages.append(f"OpenAI: {openai_response_text}")
+            # Potentially set openai_response_text to None
+
+    # Join error messages if any
+    final_error_message = " | ".join(error_messages) if error_messages else None
+        
     return render_template('index.html', 
-                           response=gemini_response, 
+                           gemini_response=gemini_response_text,
+                           openai_response=openai_response_text,
                            prompt_text=prompt,
-                           api_key_not_configured=False)
+                           error=final_error_message,
+                           gemini_configured=gemini_configured,
+                           openai_configured=openai_configured,
+                           gemini_model=GEMINI_MODEL_NAME,
+                           openai_model=OPENAI_MODEL_NAME)
 
 if __name__ == '__main__':
-    # Before running, ensure:
-    # 1. You have installed Flask: pip install Flask
-    # 2. You have configured your API_KEY in gemini_client.py
-    print("Starting Flask server...")
+    print("Starting Flask server for Multi-AI Aggregator...")
     print("Open your browser and go to http://127.0.0.1:5000/")
-    print("Make sure 'gemini_client.py' is in the same directory and API_KEY is set.")
-    app.run(debug=True) # debug=True is helpful for development
+    print("Ensure API keys are set in 'gemini_client.py' and 'openai_client.py' (or as OPENAI_API_KEY env var).")
+    app.run(debug=True)
