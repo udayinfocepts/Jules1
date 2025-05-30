@@ -7,21 +7,26 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>Uday's AI Agents</h1>
+    <header id="appHeader">
+        <div class="container"> <!-- Inner container for header content alignment -->
+            <h1>Uday's AI Agents</h1>
+            <span id="openApiStatusModal" class="api-status-icon-button" title="View API Configuration Status">⚙️</span>
+            <form action="/get_response" method="post" id="promptForm">
+                <label for="prompt">Enter your common prompt:</label>
+                <div class="input-button-wrapper">
+                    <textarea name="prompt" id="prompt" rows="3" required>{{ prompt_text if prompt_text else '' }}</textarea>
+                    <input type="submit" value="Ask my AIs">
+                </div>
+            </form>
+        </div>
+    </header>
 
-        <button id="openApiStatusModal" class="config-status-button">View API Configuration Status</button>
-
-        <form action="/get_response" method="post">
-            <label for="prompt">Enter your common prompt:</label><br>
-            <textarea name="prompt" id="prompt" rows="6" required>{{ prompt_text if prompt_text else '' }}</textarea><br>
-            <input type="submit" value="Get Responses from AIs">
-        </form>
-
-        {% if error %}
-            <div class="error-message">
-                <strong>Errors:</strong><br>{{ error }}
-            </div>
+    <div class="main-content-area container"> <!-- Main content container for responses -->
+        <!-- Error display will be handled by toast notifications (step 3) -->
+        {% if error and not toast_errors_implemented_yet %} 
+        <!-- <div class="error-message">
+            <strong>Errors:</strong><br>{{ error }}
+        </div> -->
         {% endif %}
 
         <div class="response-container">
@@ -62,6 +67,7 @@
             </div>
         </div>
 
+        <!-- Modal HTML structure can be at the end of body or inside header -->
         <div id="apiStatusModal" class="modal">
             <div class="modal-content">
                 <span class="close-modal-button">&times;</span>

@@ -22,3 +22,35 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
+// --- Toast Notification Functionality ---
+function showToast(message, type = 'error', duration = 5000) {
+    const container = document.getElementById('toastContainer');
+    if (!container) {
+        console.error('Toast container not found!');
+        return;
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`; // e.g., toast-error, toast-success
+    toast.textContent = message;
+
+    container.appendChild(toast);
+
+    // Trigger reflow for animation
+    toast.offsetHeight; 
+
+    // Add class to make it visible and animate
+    toast.classList.add('show');
+
+    // Remove toast after specified duration
+    setTimeout(() => {
+        toast.classList.remove('show');
+        // Remove the element from DOM after animation
+        setTimeout(() => {
+            if (toast.parentNode === container) { // Check if still child before removing
+                container.removeChild(toast);
+            }
+        }, 500); // Matches CSS transition time
+    }, duration);
+}
