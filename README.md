@@ -1,6 +1,6 @@
-# Multi-AI Aggregator (Gemini, OpenAI & Anthropic Claude)
+# Uday's AI Agents
 
-This application provides a simple web interface to query Google Gemini, OpenAI (ChatGPT), and Anthropic Claude APIs with a single prompt. It then displays the responses from each AI side-by-side.
+This application, "Uday's AI Agents," provides a simple, dark-themed web interface to query Google Gemini, OpenAI (ChatGPT), and Anthropic Claude APIs with a single prompt. It then displays the responses from each AI side-by-side in a clean, professional layout.
 
 ## Prerequisites
 
@@ -77,10 +77,11 @@ This application provides a simple web interface to query Google Gemini, OpenAI 
     Navigate to `http://127.0.0.1:5000/`.
 
 5.  **Use the App:**
-    *   The page will show the configuration status for all three API keys.
-    *   Enter your common prompt.
+    *   The application features a dark theme.
+    *   To check the status of your API key configurations, click the "View API Configuration Status" button. This will open a modal dialog showing which AIs are configured.
+    *   Enter your common prompt in the text area.
     *   Click "Get Responses from AIs".
-    *   Responses from Gemini, OpenAI, and Claude (if configured and successful) will be displayed.
+    *   Responses from Gemini, OpenAI, and Claude (if configured and successful) will be displayed in their respective static content boxes, each featuring a styled label.
 
 ## Project Structure
 
@@ -89,5 +90,7 @@ This application provides a simple web interface to query Google Gemini, OpenAI 
 *   `openai_client.py`: Client for OpenAI API.
 *   `claude_client.py`: Client for Anthropic Claude API.
 *   `templates/index.html`: HTML template for the UI.
+*   `static/script.js`: JavaScript for UI interactions (like the API status modal).
+*   `static/style.css`: CSS styles for the application.
 *   `requirements.txt`: Python dependencies.
 *   `README.md`: This file.
