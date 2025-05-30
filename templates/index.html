@@ -3,56 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multi-AI Aggregator (Gemini, OpenAI & Claude)</title>
-    <style>
-        body { font-family: sans-serif; margin: 20px; background-color: #f0f2f5; color: #333; }
-        .container { max-width: 1200px; /* Increased width for three columns */ margin: auto; background-color: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 2px 15px rgba(0,0,0,0.1); }
-        h1 { color: #333; text-align: center; margin-bottom: 20px; }
-        h2 { color: #444; margin-top: 30px; border-bottom: 1px solid #eee; padding-bottom: 5px;}
-        textarea { width: 97%; /* Adjusted for padding */ padding: 12px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px; resize: vertical; }
-        input[type="submit"] { background-color: #007bff; color: white; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.2s; }
-        input[type="submit"]:hover { background-color: #0056b3; }
-        .response-container { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px;}
-        .response-area { flex: 1; min-width: 300px; /* Ensures responsiveness */ padding: 15px; background-color: #f9f9f9; border-radius: 5px; white-space: pre-wrap; border: 1px solid #e7e7e7;}
-        .response-area h3 { margin-top: 0; color: #555; font-size: 18px; }
-        .error-message { background-color: #ffebee; color: #c62828; border: 1px solid #ef9a9a; padding: 12px; border-radius: 5px; margin-bottom: 20px; text-align: center; white-space: pre-wrap;}
-        .config-status { background-color: #e7f3fe; color: #0d47a1; border: 1px solid #b3e5fc; padding: 10px; border-radius: 5px; margin-bottom: 15px; font-size: 0.9em;}
-        .config-status p { margin: 5px 0; }
-        .config-ok { color: #1e8e3e; }
-        .config-nok { color: #d93025; font-weight: bold;}
-    </style>
+    <title>Uday's AI Agents</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>Multi-AI Query</h1>
+        <h1>Uday's AI Agents</h1>
 
-        <div class="config-status">
-            <h4>API Configuration Status:</h4>
-            <p>Gemini ({{ gemini_model }}): 
-                {% if gemini_configured %}
-                    <span class="config-ok">Configured</span>
-                {% else %}
-                    <span class="config-nok">NOT CONFIGURED</span> (Edit <code>gemini_client.py</code>)
-                {% endif %}
-            </p>
-            <p>OpenAI ({{ openai_model }}): 
-                {% if openai_configured %}
-                    <span class="config-ok">Configured</span>
-                {% else %}
-                    <span class="config-nok">NOT CONFIGURED</span> (Edit <code>openai_client.py</code> or set <code>OPENAI_API_KEY</code> env var)
-                {% endif %}
-            </p>
-            <p>Claude ({{ claude_model }}): 
-                {% if claude_configured %}
-                    <span class="config-ok">Configured</span>
-                {% else %}
-                    <span class="config-nok">NOT CONFIGURED</span> (Edit <code>claude_client.py</code> or set <code>ANTHROPIC_API_KEY</code> env var)
-                {% endif %}
-            </p>
-            {% if not gemini_configured or not openai_configured or not claude_configured %}
-            <p class="config-nok">Responses may be incomplete or missing if all API keys are not set.</p>
-            {% endif %}
-        </div>
+        <button id="openApiStatusModal" class="config-status-button">View API Configuration Status</button>
 
         <form action="/get_response" method="post">
             <label for="prompt">Enter your common prompt:</label><br>
@@ -67,28 +25,75 @@
         {% endif %}
 
         <div class="response-container">
-            {% if gemini_response %}
+            {# Gemini Response Area - Always Visible #}
             <div class="response-area">
-                <h3>Gemini's Response ({{ gemini_model }}):</h3>
-                <p>{{ gemini_response }}</p>
+                <h3><span class="ai-label gemini-label">Gemini</span> ({{ gemini_model }}):</h3>
+                {% if gemini_response and not "Error:" in gemini_response and not "An error occurred:" in gemini_response and not "API key not configured" in gemini_response %}
+                    <p>{{ gemini_response }}</p>
+                {% elif gemini_response %} {# Implies it's an error message from the client or app.py #}
+                    <p class="error-text">{{ gemini_response }}</p> 
+                {% else %}
+                    <p class="placeholder-text">Response from Gemini will appear here once a prompt is submitted.</p>
+                {% endif %}
             </div>
-            {% endif %}
 
-            {% if openai_response %}
+            {# OpenAI Response Area - Always Visible #}
             <div class="response-area">
-                <h3>OpenAI's Response ({{ openai_model }}):</h3>
-                <p>{{ openai_response }}</p>
+                <h3><span class="ai-label openai-label">OpenAI</span> ({{ openai_model }}):</h3>
+                {% if openai_response and not "Error:" in openai_response and not "An unexpected error occurred with OpenAI:" in openai_response and not "OpenAI AuthenticationError:" in openai_response and not "OpenAI RateLimitError:" in openai_response and not "OpenAI APIConnectionError:" in openai_response and not "API key not configured" in openai_response %}
+                    <p>{{ openai_response }}</p>
+                {% elif openai_response %} {# Implies it's an error message from the client or app.py #}
+                    <p class="error-text">{{ openai_response }}</p>
+                {% else %}
+                    <p class="placeholder-text">Response from OpenAI will appear here once a prompt is submitted.</p>
+                {% endif %}
             </div>
-            {% endif %}
             
-            {% if claude_response %}
+            {# Claude Response Area - Always Visible #}
             <div class="response-area">
-                <h3>Claude's Response ({{ claude_model }}):</h3>
-                <p>{{ claude_response }}</p>
+                <h3><span class="ai-label claude-label">Claude</span> ({{ claude_model }}):</h3>
+                {% if claude_response and not "Error:" in claude_response and not "An unexpected error occurred with Anthropic:" in claude_response and not "Anthropic AuthenticationError:" in claude_response and not "Anthropic RateLimitError:" in claude_response and not "Anthropic APIConnectionError:" in claude_response and not "API key not configured" in claude_response %}
+                    <p>{{ claude_response }}</p>
+                {% elif claude_response %} {# Implies it's an error message from the client or app.py #}
+                    <p class="error-text">{{ claude_response }}</p>
+                {% else %}
+                    <p class="placeholder-text">Response from Claude will appear here once a prompt is submitted.</p>
+                {% endif %}
             </div>
-            {% endif %}
+        </div>
+
+        <div id="apiStatusModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal-button">&times;</span>
+                <h4>API Configuration Status:</h4>
+                <p>Gemini ({{ gemini_model }}): 
+                    {% if gemini_configured %}
+                        <span class="config-ok">Configured</span>
+                    {% else %}
+                        <span class="config-nok">NOT CONFIGURED</span> (Edit <code>gemini_client.py</code>)
+                    {% endif %}
+                </p>
+                <p>OpenAI ({{ openai_model }}): 
+                    {% if openai_configured %}
+                        <span class="config-ok">Configured</span>
+                    {% else %}
+                        <span class="config-nok">NOT CONFIGURED</span> (Edit <code>openai_client.py</code> or set <code>OPENAI_API_KEY</code> env var)
+                    {% endif %}
+                </p>
+                <p>Claude ({{ claude_model }}): 
+                    {% if claude_configured %}
+                        <span class="config-ok">Configured</span>
+                    {% else %}
+                        <span class="config-nok">NOT CONFIGURED</span> (Edit <code>claude_client.py</code> or set <code>ANTHROPIC_API_KEY</code> env var)
+                    {% endif %}
+                </p>
+                {% if not gemini_configured or not openai_configured or not claude_configured %}
+                <p class="config-nok">Responses may be incomplete or missing if all API keys are not set.</p>
+                {% endif %}
+            </div>
         </div>
 
     </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
