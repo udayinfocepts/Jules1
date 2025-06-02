@@ -77,13 +77,13 @@ if __name__ == '__main__':
     else:
         print(f"Using model: {MODEL_NAME}")
         print("\nThis script will now send a test prompt to the OpenAI API.")
-        
+
         test_prompt = "What is the capital of France?"
         print(f"\nSending prompt: \"{test_prompt}\"")
-        
+
         # Get the response
         api_response = get_openai_response(test_prompt)
-        
+
         print("\nResponse from OpenAI (ChatGPT):")
         print(api_response)
 
