@@ -422,3 +422,140 @@ h2 { /* General sub-headings, if any are used outside response areas */
     background-color: #ae56c4; /* Anthropic Purple - adjust if needed, maybe #7b2cbf */
     /* color: #ffffff; */
 }
+
+/* --- History Sidebar Styles --- */
+.sidebar {
+    height: 100%; /* Full-height */
+    width: 0; /* Initially hidden */
+    position: fixed; /* Stay in place */
+    z-index: 950; /* Below API status modal (1000), but above most content */
+    top: 0;
+    left: 0;
+    background-color: #1e1e1e; /* Dark background, same as main container */
+    overflow-x: hidden; /* Disable horizontal scroll */
+    transition: width 0.3s ease-in-out; /* Animation for sliding in/out */
+    padding-top: 60px; /* Place content below the close button area */
+    border-right: 1px solid #333;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar.open {
+    width: 300px; /* Width when open, adjust as needed */
+}
+
+.sidebar h2 {
+    padding: 10px 15px;
+    text-align: center;
+    color: #ffffff;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.4em;
+    border-bottom: 1px solid #333;
+}
+
+.close-sidebar-button {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #bbbbbb;
+    text-decoration: none;
+}
+.close-sidebar-button:hover {
+    color: #ffffff;
+}
+
+#historyList {
+    list-style-type: none;
+    padding: 0 15px;
+    margin: 0;
+    overflow-y: auto; /* Allow scrolling for history items */
+    flex-grow: 1; /* Takes available vertical space */
+}
+
+#historyList li {
+    padding: 12px 10px;
+    border-bottom: 1px solid #333;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    color: #cccccc;
+    font-size: 0.9em;
+}
+
+#historyList li:hover {
+    background-color: #2c2c2c; /* Slightly lighter on hover */
+}
+
+#historyList li.active-history-item { /* Style for the currently selected history item */
+    background-color: #007bff; /* Accent color */
+    color: #ffffff;
+}
+
+/* Example styling for content within history list items */
+.history-prompt-snippet {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Show ellipsis for long prompts */
+    margin-bottom: 4px;
+}
+.history-timestamp {
+    display: block;
+    font-size: 0.8em;
+    color: #777777;
+}
+#historyList li.active-history-item .history-timestamp {
+    color: #dddddd;
+}
+
+
+.clear-history-button {
+    background-color: #4a4a4a; /* Darker button */
+    color: #e0e0e0;
+    padding: 10px 15px;
+    border: 1px solid #555;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    margin: 15px; /* Margin around the button */
+    text-align: center;
+    transition: background-color 0.2s ease-in-out;
+}
+.clear-history-button:hover {
+    background-color: #c62828; /* Red on hover for destructive action */
+    color: #ffffff;
+    border-color: #b71c1c;
+}
+
+/* Styling for the history toggle button in the main header */
+.history-toggle-button {
+    background-color: transparent;
+    color: #bbbbbb;
+    border: none;
+    font-size: 1.6em; /* Adjust to match gear icon if desired */
+    padding: 5px;
+    cursor: pointer;
+    margin-left: 10px; /* Space from previous icon/element */
+    border-radius: 50%;
+    transition: color 0.2s, background-color 0.2s;
+}
+.history-toggle-button:hover {
+    color: #ffffff;
+    /* background-color: #333333; */ /* Optional */
+}
+
+/* Adjust main app header to accommodate the new history button */
+#appHeader .container {
+    /* display: flex; align-items: center; was implicit or should be there */
+    /* justify-content: space-between; */ /* If title is on far left, icons on far right */
+}
+/* We need a wrapper for the top-right icons if we want them grouped */
+/* For now, assume history-toggle-button and api-status-icon-button are siblings */
+/* and rely on their individual positioning or flex order if header container is flex row. */
+/* If #appHeader .container is flex and justify-content: space-between, */
+/* wrap title in one div, and icons in another div to group them on the right. */
+/* Alternatively, using position:absolute for api-status-icon-button already handles it. */
+/* Let's ensure the history button is simply placed before the gear icon. */

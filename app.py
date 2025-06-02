@@ -184,13 +184,18 @@ def get_response_route():
 
     final_error_message = " | ".join(error_messages) if error_messages else None
 
+    new_qna_set_to_save = True # Set this if we actually processed a prompt
+    # If prompt was empty, we wouldn't reach here due to earlier return.
+    # This flag is primarily to distinguish full response renders from initial page loads.
+
     return render_template('index.html',
                            gemini_response=gemini_response_text, openai_response=openai_response_text, claude_response=claude_response_text,
                            prompt_text=prompt, error=final_error_message,
                            gemini_configured=gemini_configured, openai_configured=openai_configured, claude_configured=claude_configured,
                            gemini_models=_actual_gemini_models_for_dropdown, current_gemini_model=selected_gemini_model, gemini_list_error=_current_gemini_list_error, gemini_model_display=selected_gemini_model,
                            openai_models=_actual_openai_models_for_dropdown, current_openai_model=selected_openai_model, openai_list_error=_current_openai_list_error, openai_model_display=selected_openai_model,
-                           claude_models=_actual_claude_models_for_dropdown, current_claude_model=selected_claude_model, claude_list_error=_current_claude_list_error, claude_model_display=selected_claude_model)
+                           claude_models=_actual_claude_models_for_dropdown, current_claude_model=selected_claude_model, claude_list_error=_current_claude_list_error, claude_model_display=selected_claude_model,
+                           new_qna_set_to_save=new_qna_set_to_save)
 
 if __name__ == '__main__':
     print("Starting Flask server for Multi-AI Aggregator (Gemini, OpenAI, Claude)...")

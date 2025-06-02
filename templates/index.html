@@ -7,9 +7,26 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    <!-- History Sidebar -->
+    <div id="historySidebar" class="sidebar">
+        <a href="javascript:void(0)" class="close-sidebar-button" id="closeHistorySidebar">&times; Close</a>
+        <h2>History</h2>
+        <ul id="historyList">
+            <!-- History items will be populated here by JavaScript -->
+            <!-- Example item (for structure reference, will be dynamic):
+            <li>
+                <span class="history-prompt-snippet">What is AI?</span>
+                <span class="history-timestamp">2024-05-31T12:00:00Z</span>
+            </li>
+            -->
+        </ul>
+        <button id="clearHistoryButton" class="clear-history-button">Clear All History</button>
+    </div>
+
     <header id="appHeader">
         <div class="container"> <!-- Inner container for header content alignment -->
             <h1>Uday's AI Agents</h1>
+            <button id="openHistorySidebar" class="history-toggle-button" title="View History">📜 History</button>
             <span id="openApiStatusModal" class="api-status-icon-button" title="View API Configuration Status">⚙️</span>
             <form action="/get_response" method="post" id="promptForm">
                 <div class="input-button-wrapper">
@@ -36,7 +53,7 @@
 
         <div class="response-container">
             {# Gemini Response Area - Always Visible #}
-            <div class="response-area">
+            <div class="response-area" id="geminiResponseArea">
                 <div class="response-header">
                     <h3><span class="ai-label gemini-label">Gemini</span></h3>
                     <div class="model-selector-group">
@@ -67,7 +84,7 @@
             </div>
 
             {# OpenAI Response Area - Always Visible #}
-            <div class="response-area">
+            <div class="response-area" id="openaiResponseArea">
                 <div class="response-header">
                     <h3><span class="ai-label openai-label">OpenAI</span> ({{ current_openai_model | replace("models/", "") }})</h3>
                     <div class="model-selector-group">
@@ -98,7 +115,7 @@
             </div>
 
             {# Claude Response Area - Always Visible #}
-            <div class="response-area">
+            <div class="response-area" id="claudeResponseArea">
                 <div class="response-header">
                     <h3><span class="ai-label claude-label">Claude</span> ({{ current_claude_model | replace("models/", "") | replace("claude-3-haiku-","c3-haiku-") }})</h3>
                     <div class="model-selector-group">
@@ -164,5 +181,36 @@
 
     </div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <!-- At the end of body, after including static/script.js -->
+    <script>
+    {% if new_qna_set_to_save and prompt_text %} // Only save if flag is true and prompt exists
+        document.addEventListener('DOMContentLoaded', function() {
+            // Data is directly available from Jinja variables passed to this specific render.
+            // The responses and models used are already in the template context.
+            const qnaSetToSave = {
+                id: new Date().getTime().toString(), // This doesn't need tojson as it's not from Flask context directly here
+                prompt: {{ prompt_text | tojson }},
+                gemini_response: {{ gemini_response | tojson }},
+                gemini_model: {{ current_gemini_model | tojson }},
+                openai_response: {{ openai_response | tojson }},
+                openai_model: {{ current_openai_model | tojson }},
+                claude_response: {{ claude_response | tojson }},
+                claude_model: {{ current_claude_model | tojson }},
+                timestamp: new Date().toISOString() // This is JS-generated, no filter needed
+            };
+
+            if (qnaSetToSave.prompt) {
+                saveQASet(qnaSetToSave); // Assumes saveQASet is globally available from script.js
+
+                const historySidebar = document.getElementById('historySidebar');
+                if (historySidebar && historySidebar.classList.contains('open')) {
+                    if (typeof renderHistorySidebar === 'function') { // Check if function exists
+                        renderHistorySidebar();
+                    }
+                }
+            }
+        });
+    {% endif %}
+    </script>
 </body>
 </html>
