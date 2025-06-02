@@ -23,20 +23,20 @@ def index():
     gemini_configured = check_gemini_config()
     openai_configured = check_openai_config()
     claude_configured = check_claude_config()
-    
+
     # --- Smart Default Selection Logic for index() ---
-    determined_default_model_id = DEFAULT_GEMINI_MODEL 
+    determined_default_model_id = DEFAULT_GEMINI_MODEL
     actual_models_for_dropdown = [{'id': DEFAULT_GEMINI_MODEL, 'display_name': f"Default: {DEFAULT_GEMINI_MODEL.split('/')[-1]}"}]
     current_gemini_list_error = None
 
     if gemini_configured:
-        gemini_models_list_from_api = list_gemini_models() 
+        gemini_models_list_from_api = list_gemini_models()
 
         if gemini_models_list_from_api and isinstance(gemini_models_list_from_api, list) and \
            gemini_models_list_from_api[0]['id'] not in ['ERROR', 'NO_MODELS', 'API_KEY_NOT_CONFIGURED']:
-            
+
             actual_models_for_dropdown = gemini_models_list_from_api
-            
+
             preferred_model_found = False
             # 1. Check if DEFAULT_GEMINI_MODEL is in the fetched list
             for model in actual_models_for_dropdown:
@@ -44,7 +44,7 @@ def index():
                     determined_default_model_id = DEFAULT_GEMINI_MODEL
                     preferred_model_found = True
                     break
-            
+
             # 2. If not, look for other "flash" models (non-legacy, non-beta, non-vision, non-embed)
             if not preferred_model_found:
                 for model in actual_models_for_dropdown:
@@ -52,13 +52,13 @@ def index():
                     if 'flash' in model_id_lower and not any(term in model_id_lower for term in ['legacy', 'alpha', 'beta', 'embed', 'vision']):
                         determined_default_model_id = model['id']
                         preferred_model_found = True
-                        break 
-            
+                        break
+
             # 3. If no preferred model found by now, use the first model from the valid dynamic list
             if not preferred_model_found and actual_models_for_dropdown:
                 determined_default_model_id = actual_models_for_dropdown[0]['id']
             # If actual_models_for_dropdown was empty, determined_default_model_id remains DEFAULT_GEMINI_MODEL
-        
+
         else: # Error fetching list or Gemini not configured (this inner else handles errors from list_gemini_models)
             if gemini_models_list_from_api and isinstance(gemini_models_list_from_api, list): # It's an error structure
                 current_gemini_list_error = gemini_models_list_from_api[0]['display_name']
@@ -72,7 +72,7 @@ def index():
         # actual_models_for_dropdown remains the single-entry default list
     # --- End Smart Default Selection Logic for index() ---
 
-    return render_template('index.html', 
+    return render_template('index.html',
                            gemini_configured=gemini_configured,
                            openai_configured=openai_configured,
                            claude_configured=claude_configured,
@@ -80,7 +80,7 @@ def index():
                            current_gemini_model=determined_default_model_id,
                            gemini_list_error=current_gemini_list_error,
                            gemini_model_display=determined_default_model_id, # For API status modal initially
-                           openai_model_display=DEFAULT_OPENAI_MODEL, 
+                           openai_model_display=DEFAULT_OPENAI_MODEL,
                            claude_model_display=DEFAULT_CLAUDE_MODEL)
 
 @app.route('/get_response', methods=['POST'])
@@ -88,11 +88,11 @@ def get_response_route():
     gemini_configured = check_gemini_config()
     openai_configured = check_openai_config()
     claude_configured = check_claude_config()
-    
+
     prompt = request.form.get('prompt')
-    
+
     # --- Smart Default Selection Logic for get_response_route() (for re-rendering) ---
-    _initial_default_gemini_model = DEFAULT_GEMINI_MODEL 
+    _initial_default_gemini_model = DEFAULT_GEMINI_MODEL
     actual_models_for_dropdown_on_post = [{'id': DEFAULT_GEMINI_MODEL, 'display_name': f"Default: {DEFAULT_GEMINI_MODEL.split('/')[-1]}"}]
     current_gemini_list_error_on_post = None
 
@@ -101,9 +101,9 @@ def get_response_route():
 
         if gemini_models_list_from_api and isinstance(gemini_models_list_from_api, list) and \
            gemini_models_list_from_api[0]['id'] not in ['ERROR', 'NO_MODELS', 'API_KEY_NOT_CONFIGURED']:
-            
+
             actual_models_for_dropdown_on_post = gemini_models_list_from_api
-            
+
             preferred_model_found = False
             for model in actual_models_for_dropdown_on_post:
                 if model['id'] == DEFAULT_GEMINI_MODEL:
@@ -116,7 +116,7 @@ def get_response_route():
                     if 'flash' in model_id_lower and not any(term in model_id_lower for term in ['legacy', 'alpha', 'beta', 'embed', 'vision']):
                         _initial_default_gemini_model = model['id']
                         preferred_model_found = True
-                        break 
+                        break
             if not preferred_model_found and actual_models_for_dropdown_on_post:
                 _initial_default_gemini_model = actual_models_for_dropdown_on_post[0]['id']
         else:
@@ -130,16 +130,16 @@ def get_response_route():
     # --- End Smart Default Selection Logic ---
 
     if not prompt:
-        return render_template('index.html', 
-                               error="Prompt cannot be empty.", 
+        return render_template('index.html',
+                               error="Prompt cannot be empty.",
                                prompt_text=prompt,
                                gemini_configured=gemini_configured,
                                openai_configured=openai_configured,
                                claude_configured=claude_configured,
                                gemini_models=actual_models_for_dropdown_on_post,
-                               current_gemini_model=selected_gemini_model, 
+                               current_gemini_model=selected_gemini_model,
                                gemini_list_error=current_gemini_list_error_on_post,
-                               gemini_model_display=selected_gemini_model, 
+                               gemini_model_display=selected_gemini_model,
                                openai_model_display=DEFAULT_OPENAI_MODEL,
                                claude_model_display=DEFAULT_CLAUDE_MODEL)
 
@@ -155,7 +155,7 @@ def get_response_route():
         gemini_response_text = get_gemini_response(prompt, model_to_use=selected_gemini_model) # Pass selected model
         if "Error:" in gemini_response_text or "An error occurred:" in gemini_response_text: # Check for errors from client
             error_messages.append(f"Gemini ({selected_gemini_model.replace('models/','')}): {gemini_response_text}")
-    
+
     # OpenAI
     if not openai_configured:
         error_messages.append("OpenAI: API key not configured.")
@@ -174,8 +174,8 @@ def get_response_route():
 
 
     final_error_message = " | ".join(error_messages) if error_messages else None
-        
-    return render_template('index.html', 
+
+    return render_template('index.html',
                            gemini_response=gemini_response_text,
                            openai_response=openai_response_text,
                            claude_response=claude_response_text,
@@ -184,9 +184,9 @@ def get_response_route():
                            gemini_configured=gemini_configured,
                            openai_configured=openai_configured,
                            claude_configured=claude_configured,
-                           gemini_models=gemini_models_list_for_template,
+                           gemini_models=actual_models_for_dropdown_on_post,
                            current_gemini_model=selected_gemini_model,
-                           gemini_list_error=gemini_list_error_for_template,
+                           gemini_list_error=current_gemini_list_error_on_post,
                            gemini_model_display=selected_gemini_model, # Show selected model in modal
                            openai_model_display=DEFAULT_OPENAI_MODEL,
                            claude_model_display=DEFAULT_CLAUDE_MODEL)

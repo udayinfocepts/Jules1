@@ -38,7 +38,7 @@ function showToast(message, type = 'error', duration = 5000) {
     container.appendChild(toast);
 
     // Trigger reflow for animation
-    toast.offsetHeight; 
+    toast.offsetHeight;
 
     // Add class to make it visible and animate
     toast.classList.add('show');

@@ -28,7 +28,7 @@
 
     <div class="main-content-area container"> <!-- Main content container for responses -->
         <!-- Error display will be handled by toast notifications (step 3) -->
-        {% if error and not toast_errors_implemented_yet %} 
+        {% if error and not toast_errors_implemented_yet %}
         <!-- <div class="error-message">
             <strong>Errors:</strong><br>{{ error }}
         </div> -->
@@ -60,7 +60,7 @@
                 {% if gemini_response and not "Error:" in gemini_response and not "An error occurred:" in gemini_response and not "API key not configured" in gemini_response %}
                     <p>{{ gemini_response }}</p>
                 {% elif gemini_response %} {# Implies it's an error message from the client or app.py #}
-                    <p class="error-text">{{ gemini_response }}</p> 
+                    <p class="error-text">{{ gemini_response }}</p>
                 {% else %}
                     <p class="placeholder-text">Response from Gemini will appear here once a prompt is submitted.</p>
                 {% endif %}
@@ -77,7 +77,7 @@
                     <p class="placeholder-text">Response from OpenAI will appear here once a prompt is submitted.</p>
                 {% endif %}
             </div>
-            
+
             {# Claude Response Area - Always Visible #}
             <div class="response-area">
                 <h3><span class="ai-label claude-label">Claude</span> ({{ claude_model_display | replace("models/", "") | replace("claude-3-haiku-","c3-haiku-") }})</h3>
@@ -96,21 +96,21 @@
             <div class="modal-content">
                 <span class="close-modal-button">&times;</span>
                 <h4>API Configuration Status:</h4>
-                <p>Gemini ({{ gemini_model }}): 
+                <p>Gemini ({{ gemini_model }}):
                     {% if gemini_configured %}
                         <span class="config-ok">Configured</span>
                     {% else %}
                         <span class="config-nok">NOT CONFIGURED</span> (Edit <code>gemini_client.py</code>)
                     {% endif %}
                 </p>
-                <p>OpenAI ({{ openai_model }}): 
+                <p>OpenAI ({{ openai_model }}):
                     {% if openai_configured %}
                         <span class="config-ok">Configured</span>
                     {% else %}
                         <span class="config-nok">NOT CONFIGURED</span> (Edit <code>openai_client.py</code> or set <code>OPENAI_API_KEY</code> env var)
                     {% endif %}
                 </p>
-                <p>Claude ({{ claude_model }}): 
+                <p>Claude ({{ claude_model }}):
                     {% if claude_configured %}
                         <span class="config-ok">Configured</span>
                     {% else %}

@@ -10,7 +10,7 @@ import os
 ANTHROPIC_API_KEY_DIRECT = 'YOUR_ANTHROPIC_API_KEY' # Replace if not using environment variable
 
 # Using Claude 3 Haiku for cost-effectiveness and speed.
-MODEL_NAME = 'claude-3-haiku-20240307' 
+MODEL_NAME = 'claude-3-haiku-20240307'
 
 def get_claude_response(prompt: str, api_key: str = None) -> str:
     """
@@ -44,7 +44,7 @@ def get_claude_response(prompt: str, api_key: str = None) -> str:
                 {"role": "user", "content": prompt}
             ]
         )
-        
+
         # The response structure for Claude API provides content as a list of blocks.
         # We need to extract the text from the first text block if available.
         if response.content and isinstance(response.content, list) and len(response.content) > 0:
@@ -81,12 +81,12 @@ if __name__ == '__main__':
     else:
         print(f"Using model: {MODEL_NAME}")
         print("\nThis script will now send a test prompt to the Anthropic Claude API.")
-        
+
         test_prompt = "Explain the concept of 'emergence' in complex systems in a few sentences."
         print(f"\nSending prompt: \"{test_prompt}\"")
-        
+
         api_response = get_claude_response(test_prompt)
-        
+
         print("\nResponse from Anthropic Claude:")
         print(api_response)
 
