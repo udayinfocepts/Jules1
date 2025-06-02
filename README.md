@@ -1,6 +1,6 @@
 # Uday's AI Agents
 
-This application, "Uday's AI Agents," provides a simple, dark-themed web interface to query Google Gemini, OpenAI (ChatGPT), and Anthropic Claude APIs with a single prompt. Users can select from available models for both Gemini and OpenAI. It then displays the responses from each AI side-by-side in a clean, professional layout with a compact input header.
+This application, "Uday's AI Agents," provides a simple, dark-themed web interface to query Google Gemini, OpenAI (ChatGPT), and Anthropic Claude APIs with a single prompt. Users can select from available models for Gemini, OpenAI, and Claude. It then displays the responses from each AI side-by-side in a clean, professional layout with a compact input header.
 
 ## Prerequisites
 
@@ -89,6 +89,11 @@ This application, "Uday's AI Agents," provides a simple, dark-themed web interfa
         *   If there's an issue fetching the list (e.g., API key problem, authentication error), an error message will appear next to the dropdown, and it may show a default model.
         *   Select your desired OpenAI model from this list. This model will be used for the OpenAI query.
         *   The OpenAI response box header (e.g., "OpenAI (gpt-3.5-turbo)") will reflect the model used.
+    *   **Claude Model Selection:** Likewise, within the header of the Claude response box, below the 'Claude' label, you will find a dropdown menu for selecting Claude models.
+        *   This dropdown is populated with a curated list of recommended Claude models (e.g., Haiku, Sonnet variants), as provided by the application (static list).
+        *   If the Claude API key is not configured, a notification may appear next to the dropdown, but the list of models will still be visible.
+        *   Select your desired Claude model from this list. The chosen model will be used for the Claude query.
+        *   The Claude response box header (e.g., "Claude (Claude 3 Haiku)") will reflect the model used.
     *   Enter your common prompt directly into the large text area at the top of the page (it uses placeholder text like "Enter your common prompt for all AIs here..." for guidance). The "Ask my AIs" button is located to the right of this input area.
     *   Click "Ask my AIs".
     *   If there are errors (e.g., an API key issue for a specific service), they will appear as temporary toast notifications, typically at the bottom-right of the screen.
@@ -99,9 +104,9 @@ This application, "Uday's AI Agents," provides a simple, dark-themed web interfa
 *   `app.py`: Flask web server.
 *   `gemini_client.py`: Client for Google Gemini API (includes model listing).
 *   `openai_client.py`: Client for OpenAI API (includes model listing).
-*   `claude_client.py`: Client for Anthropic Claude API.
+*   `claude_client.py`: Client for Anthropic Claude API (provides a model list and uses selected model).
 *   `templates/index.html`: HTML template for the UI.
-*   `static/script.js`: JavaScript for UI interactions (modal, toast notifications).
+*   `static/script.js`: JavaScript for UI interactions (modal, toast notifications, model sync).
 *   `static/style.css`: CSS for styling the application.
 *   `requirements.txt`: Python dependencies.
 *   `README.md`: This file.
