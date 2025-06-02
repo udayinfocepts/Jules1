@@ -193,42 +193,41 @@
     <!-- At the end of body, after including static/script.js -->
     <script>
     {% if new_qna_set_to_save and prompt_text %} // Only save if flag is true and prompt exists
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Attempting to create qnaSetToSave object. Data from Flask:'); // DEBUG
-            console.log('Prompt for history:', {{ prompt_text | tojson }}); // DEBUG
-            console.log('Gemini response for history:', {{ gemini_response | tojson }}); // DEBUG
-            console.log('Gemini model for history:', {{ current_gemini_model | tojson }}); // DEBUG
-            console.log('OpenAI response for history:', {{ openai_response | tojson }}); // DEBUG
-            console.log('OpenAI model for history:', {{ current_openai_model | tojson }}); // DEBUG
-            console.log('Claude response for history:', {{ claude_response | tojson }}); // DEBUG
-            console.log('Claude model for history:', {{ current_claude_model | tojson }}); // DEBUG
+        // Script now runs immediately when this block is parsed, not waiting for DOMContentLoaded
+        console.log('Attempting to create qnaSetToSave object. Data from Flask:'); // DEBUG
+        console.log('Prompt for history:', {{ prompt_text | tojson }}); // DEBUG
+        console.log('Gemini response for history:', {{ gemini_response | tojson }}); // DEBUG
+        console.log('Gemini model for history:', {{ current_gemini_model | tojson }}); // DEBUG
+        console.log('OpenAI response for history:', {{ openai_response | tojson }}); // DEBUG
+        console.log('OpenAI model for history:', {{ current_openai_model | tojson }}); // DEBUG
+        console.log('Claude response for history:', {{ claude_response | tojson }}); // DEBUG
+        console.log('Claude model for history:', {{ current_claude_model | tojson }}); // DEBUG
 
-            const qnaSetToSave = {
-                id: new Date().getTime().toString(), // This doesn't need tojson as it's not from Flask context directly here
-                prompt: {{ prompt_text | tojson }},
-                gemini_response: {{ gemini_response | tojson }}, 
-                gemini_model: {{ current_gemini_model | tojson }},
-                openai_response: {{ openai_response | tojson }},
-                openai_model: {{ current_openai_model | tojson }},
-                claude_response: {{ claude_response | tojson }},
-                claude_model: {{ current_claude_model | tojson }},
-                timestamp: new Date().toISOString() // This is JS-generated, no filter needed
-            };
-            console.log('Constructed qnaSetToSave:', qnaSetToSave); // DEBUG
+        const qnaSetToSave = {
+            id: new Date().getTime().toString(), // This doesn't need tojson as it's not from Flask context directly here
+            prompt: {{ prompt_text | tojson }},
+            gemini_response: {{ gemini_response | tojson }}, 
+            gemini_model: {{ current_gemini_model | tojson }},
+            openai_response: {{ openai_response | tojson }},
+            openai_model: {{ current_openai_model | tojson }},
+            claude_response: {{ claude_response | tojson }},
+            claude_model: {{ current_claude_model | tojson }},
+            timestamp: new Date().toISOString() // This is JS-generated, no filter needed
+        };
+        console.log('Constructed qnaSetToSave:', qnaSetToSave); // DEBUG
+        
+        if (qnaSetToSave.prompt) {
+            console.log('Calling saveQASet with constructed object.'); // DEBUG
+            saveQASet(qnaSetToSave); // Assumes saveQASet is globally available from script.js
             
-            if (qnaSetToSave.prompt) {
-                console.log('Calling saveQASet with constructed object.'); // DEBUG
-                saveQASet(qnaSetToSave); // Assumes saveQASet is globally available from script.js
-                
-                const historySidebar = document.getElementById('historySidebar');
-                if (historySidebar && historySidebar.classList.contains('open')) {
-                    if (typeof renderHistorySidebar === 'function') { // Check if function exists
-                        console.log('Calling renderHistorySidebar after saveQASet from index.html script.'); // DEBUG
-                        renderHistorySidebar();
-                    }
+            const historySidebar = document.getElementById('historySidebar');
+            if (historySidebar && historySidebar.classList.contains('open')) {
+                if (typeof renderHistorySidebar === 'function') { // Check if function exists
+                    console.log('Calling renderHistorySidebar(true) after saveQASet from index.html script.'); // DEBUG
+                    renderHistorySidebar(true); // Pass true to make the new item active
                 }
             }
-        });
+        }
     {% endif %}
     </script>
 </body>
