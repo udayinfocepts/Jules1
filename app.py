@@ -3,7 +3,7 @@ import os
 
 # Import from our AI client modules
 from gemini_client import get_gemini_response, list_gemini_models, API_KEY as GEMINI_API_KEY
-DEFAULT_GEMINI_MODEL = 'models/gemini-1.5-flash-latest'
+DEFAULT_GEMINI_MODEL = 'models/gemini-1.5-flash-latest' 
 
 from openai_client import get_openai_response, list_openai_models, OPENAI_API_KEY_DIRECT, MODEL_NAME as DEFAULT_OPENAI_MODEL
 from claude_client import get_claude_response, list_claude_models, ANTHROPIC_API_KEY_DIRECT, MODEL_NAME as DEFAULT_CLAUDE_MODEL
@@ -24,13 +24,13 @@ def index():
     gemini_configured = check_gemini_config()
     openai_configured = check_openai_config()
     claude_configured = check_claude_config()
-
+    
     # --- Gemini Model Selection Logic ---
-    determined_gemini_model_id = DEFAULT_GEMINI_MODEL
+    determined_gemini_model_id = DEFAULT_GEMINI_MODEL 
     actual_gemini_models_for_dropdown = [{'id': DEFAULT_GEMINI_MODEL, 'display_name': f"Default: {DEFAULT_GEMINI_MODEL.split('/')[-1]}"}]
     current_gemini_list_error = None
     if gemini_configured:
-        gemini_models_list_from_api = list_gemini_models()
+        gemini_models_list_from_api = list_gemini_models() 
         if gemini_models_list_from_api and isinstance(gemini_models_list_from_api, list) and \
            gemini_models_list_from_api[0]['id'] not in ['ERROR', 'NO_MODELS', 'API_KEY_NOT_CONFIGURED']:
             actual_gemini_models_for_dropdown = gemini_models_list_from_api
@@ -73,7 +73,7 @@ def index():
 
     # --- Claude Model Selection Logic (Static List) ---
     determined_claude_model_id = DEFAULT_CLAUDE_MODEL
-    actual_claude_models_for_dropdown = list_claude_models()
+    actual_claude_models_for_dropdown = list_claude_models() 
     current_claude_list_error = None
     if not claude_configured:
         current_claude_list_error = "Claude API Key not configured."
@@ -84,7 +84,7 @@ def index():
         determined_claude_model_id = actual_claude_models_for_dropdown[0]['id']
     # else: determined_claude_model_id remains the hardcoded DEFAULT_CLAUDE_MODEL if list is empty or default not in it.
 
-    return render_template('index.html',
+    return render_template('index.html', 
                            gemini_configured=gemini_configured, openai_configured=openai_configured, claude_configured=claude_configured,
                            gemini_models=actual_gemini_models_for_dropdown, current_gemini_model=determined_gemini_model_id, gemini_list_error=current_gemini_list_error, gemini_model_display=determined_gemini_model_id,
                            openai_models=actual_openai_models_for_dropdown, current_openai_model=determined_openai_model_id, openai_list_error=current_openai_list_error, openai_model_display=determined_openai_model_id,
@@ -145,7 +145,7 @@ def get_response_route():
 
     # --- Claude Model Logic for POST re-render context ---
     _initial_claude_model_id = DEFAULT_CLAUDE_MODEL
-    _actual_claude_models_for_dropdown = list_claude_models()
+    _actual_claude_models_for_dropdown = list_claude_models() 
     _current_claude_list_error = None
     if not claude_configured: _current_claude_list_error = "Claude API Key not configured."
     is_default_claude_in_list = any(m['id'] == DEFAULT_CLAUDE_MODEL for m in _actual_claude_models_for_dropdown)
@@ -155,7 +155,7 @@ def get_response_route():
 
 
     if not prompt:
-        return render_template('index.html',
+        return render_template('index.html', 
                                error="Prompt cannot be empty.", prompt_text=prompt,
                                gemini_configured=gemini_configured, openai_configured=openai_configured, claude_configured=claude_configured,
                                gemini_models=_actual_gemini_models_for_dropdown, current_gemini_model=selected_gemini_model, gemini_list_error=_current_gemini_list_error, gemini_model_display=selected_gemini_model,
@@ -169,7 +169,7 @@ def get_response_route():
         gemini_response_text = get_gemini_response(prompt, model_to_use=selected_gemini_model)
         if "Error:" in gemini_response_text or "An error occurred:" in gemini_response_text: error_messages.append(f"Gemini ({selected_gemini_model.split('/')[-1]}): {gemini_response_text}")
     else: error_messages.append("Gemini: API key not configured.")
-
+    
     if openai_configured:
         openai_response_text = get_openai_response(prompt, model_to_use=selected_openai_model)
         if "Error:" in openai_response_text or "An unexpected error occurred with OpenAI:" in openai_response_text or "OpenAI AuthenticationError:" in openai_response_text or "OpenAI RateLimitError:" in openai_response_text or "OpenAI APIConnectionError:" in openai_response_text or "OpenAI NotFoundError:" in openai_response_text :
@@ -177,18 +177,18 @@ def get_response_route():
     else: error_messages.append("OpenAI: API key not configured.")
 
     if claude_configured:
-        claude_response_text = get_claude_response(prompt, model_to_use=selected_claude_model)
+        claude_response_text = get_claude_response(prompt, model_to_use=selected_claude_model) 
         if "Error:" in claude_response_text or "An unexpected error occurred with Anthropic:" in claude_response_text or "Anthropic AuthenticationError:" in claude_response_text or "Anthropic RateLimitError:" in claude_response_text or "Anthropic APIConnectionError:" in claude_response_text:
             error_messages.append(f"Claude ({selected_claude_model.replace('claude-3-haiku-','c3-haiku-')}): {claude_response_text}")
     else: error_messages.append("Claude: API key not configured.")
 
     final_error_message = " | ".join(error_messages) if error_messages else None
-
+    
     new_qna_set_to_save = True # Set this if we actually processed a prompt
     # If prompt was empty, we wouldn't reach here due to earlier return.
     # This flag is primarily to distinguish full response renders from initial page loads.
-
-    return render_template('index.html',
+        
+    return render_template('index.html', 
                            gemini_response=gemini_response_text, openai_response=openai_response_text, claude_response=claude_response_text,
                            prompt_text=prompt, error=final_error_message,
                            gemini_configured=gemini_configured, openai_configured=openai_configured, claude_configured=claude_configured,

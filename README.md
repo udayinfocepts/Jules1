@@ -104,7 +104,7 @@ This application, "Uday's AI Agents," provides a simple, dark-themed web interfa
 
 The application includes a persistent Q&A history feature that allows you to review and reload past interactions.
 
-*   **Accessing History:** A "📜 History" button is located in the top header area (next to the API status gear icon). Clicking this button toggles a sidebar on the left side of the screen.
+*   **Accessing History:** A "📜 History" button is located in the top header area (next to the API status gear icon). Clicking this button toggles a sidebar on the left side of the screen. The sidebar will remember its last open or closed state across browser sessions and page reloads (e.g., after submitting a new query). If you leave it open, it will remain open.
 *   **Sidebar Content:** The history sidebar lists your past Q&A sessions. Each item typically shows:
     *   A snippet of your original prompt.
     *   The date and time of the interaction.

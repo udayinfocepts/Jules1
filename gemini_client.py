@@ -48,7 +48,7 @@ def list_gemini_models(api_key: str = None) -> list:
     Args:
         api_key: Optional. Your Google AI Studio API key. If not provided,
                  it will try to use the API_KEY constant set in this file.
-
+    
     Returns:
         A list of dictionaries, where each dictionary has 'id' (model resource name)
         and 'display_name'. Returns an empty list if an error occurs or no suitable models are found.
@@ -62,7 +62,7 @@ def list_gemini_models(api_key: str = None) -> list:
 
     try:
         genai.configure(api_key=current_api_key)
-
+        
         # Iterate through all available models
         for model in genai.list_models():
             # Check if the model supports the 'generateContent' method (or similar)
@@ -71,9 +71,9 @@ def list_gemini_models(api_key: str = None) -> list:
             if any(method in ['generateContent', 'generate_content', 'models.generateContent'] for method in model.supported_generation_methods):
                 models_list.append({
                     'id': model.name,  # e.g., 'models/gemini-pro'
-                    'display_name': model.display_name
+                    'display_name': model.display_name 
                 })
-
+        
         if not models_list:
              # This case could happen if the API returns models but none support generateContent,
              # or if the API returns no models at all.
@@ -98,18 +98,18 @@ if __name__ == "__main__":
     else:
         print(f"Using model (for get_gemini_response test): {MODEL_NAME}")
         print("\nThis script will now send a test prompt to the Gemini API.")
-
+        
         test_prompt = "Explain what a Large Language Model is in one sentence."
         print(f"\nSending prompt: \"{test_prompt}\"")
-
+        
         # Get the response
         api_response = get_gemini_response(test_prompt, model_to_use=MODEL_NAME)
-
+        
         print("\nResponse from Gemini:")
         print(api_response)
 
         print("\n--- Get Response Test Complete ---")
-
+    
     print("\n--- Testing Model Listing ---")
     if API_KEY == 'YOUR_API_KEY':
         print("Skipping model listing test as API_KEY is not configured.")
