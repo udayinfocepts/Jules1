@@ -10,82 +10,144 @@ import os
 # You can obtain an API key from: https://platform.openai.com/account/api-keys
 OPENAI_API_KEY_DIRECT = 'YOUR_OPENAI_API_KEY' # Replace if not using environment variable
 
-MODEL_NAME = 'gpt-3.5-turbo'
+MODEL_NAME = 'gpt-3.5-turbo' # This will be the default for __main__ tests
 
-def get_openai_response(prompt: str, api_key: str = None) -> str:
+# New function to list models:
+def list_openai_models(api_key: str = None) -> list:
     """
-    Sends a prompt to the OpenAI API (ChatGPT) and returns the text response.
+    Lists available OpenAI GPT models suitable for chat completion.
 
     Args:
-        prompt: The text prompt to send to the model.
-        api_key: Optional. Your OpenAI API key. If not provided,
-                 the function will try to use the OPENAI_API_KEY environment
-                 variable or the OPENAI_API_KEY_DIRECT variable set in this file.
+        api_key: Optional. Your OpenAI API key.
 
     Returns:
-        The model's text response, or an error message if something went wrong.
+        A list of dictionaries, where each has 'id' and 'display_name' (which is also the id).
+        Returns a list with an error indicator if an error occurs.
     """
     client = None
     try:
         if api_key:
             client = openai.OpenAI(api_key=api_key)
         elif os.getenv('OPENAI_API_KEY'):
-            client = openai.OpenAI() # Uses environment variable OPENAI_API_KEY
+            client = openai.OpenAI()
+        elif OPENAI_API_KEY_DIRECT != 'YOUR_OPENAI_API_KEY':
+            client = openai.OpenAI(api_key=OPENAI_API_KEY_DIRECT)
+        else:
+            return [{'id': 'ERROR', 'display_name': 'OpenAI API Key Not Configured'}]
+
+        models_list_data = client.models.list()
+        processed_models = []
+        if models_list_data:
+            for model in models_list_data.data: # .data contains the list of Model objects
+                # Filter for GPT models suitable for chat, owned by openai or openai-org primarily
+                # Exclude models containing 'vision', 'image', 'audio', 'embed', 'instruct', 'davinci', 'babbage', 'curie', 'ada' unless it's a gpt model
+                # This tries to get general purpose chat models like gpt-3.5-turbo, gpt-4, etc.
+                model_id_lower = model.id.lower()
+                if model_id_lower.startswith('gpt-') and \
+                   not any(term in model_id_lower for term in ['instruct', 'vision', 'image', 'audio', 'embed']) and \
+                   ('openai' in model.owned_by.lower() or 'openai-org' in model.owned_by.lower()): # Check ownership to prefer base models
+                    processed_models.append({'id': model.id, 'display_name': model.id})
+
+        if not processed_models:
+            return [{'id': 'NO_MODELS', 'display_name': 'No suitable GPT models found'}]
+
+        # Sort models, perhaps to put gpt-4 versions before gpt-3.5 if desired, or just alphabetically
+        processed_models.sort(key=lambda x: x['id'], reverse=True) # Simple sort, gpt-4 often appears before gpt-3.5
+
+        return processed_models
+    except openai.AuthenticationError:
+        return [{'id': 'AUTH_ERROR', 'display_name': 'OpenAI Auth Error (check key/billing)'}]
+    except Exception as e:
+        print(f"An error occurred while listing OpenAI models: {e}")
+        return [{'id': 'ERROR', 'display_name': f'Error listing OpenAI models: {str(e)}'}]
+
+# Modify existing get_openai_response function:
+def get_openai_response(prompt: str, model_to_use: str, api_key: str = None) -> str:
+    """
+    Sends a prompt to the specified OpenAI API model and returns the text response.
+
+    Args:
+        prompt: The text prompt to send to the model.
+        model_to_use: The specific OpenAI model ID to use (e.g., 'gpt-3.5-turbo').
+        api_key: Optional. Your OpenAI API key.
+    Returns:
+        The model's text response, or an error message if something went wrong.
+    """
+    client = None
+    if not model_to_use:
+        return "Error: No model specified for OpenAI."
+
+    try:
+        if api_key:
+            client = openai.OpenAI(api_key=api_key)
+        elif os.getenv('OPENAI_API_KEY'):
+            client = openai.OpenAI()
         elif OPENAI_API_KEY_DIRECT != 'YOUR_OPENAI_API_KEY':
             client = openai.OpenAI(api_key=OPENAI_API_KEY_DIRECT)
         else:
             return "Error: OpenAI API key not configured. Please set the OPENAI_API_KEY environment variable or update OPENAI_API_KEY_DIRECT in openai_client.py."
 
-        # Create a chat completion request
-        # For gpt-3.5-turbo and similar models, the input is a list of messages
         response = client.chat.completions.create(
-            model=MODEL_NAME,
+            model=model_to_use, # Use the passed model_to_use
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": prompt}
             ]
         )
-        # The response structure for chat models provides choices, and the message content is nested.
         if response.choices and len(response.choices) > 0:
             return response.choices[0].message.content.strip()
         else:
             return "Error: No response received from OpenAI."
 
     except openai.AuthenticationError:
-        return "OpenAI AuthenticationError: Incorrect API key or billing issue. Please check your OpenAI API key and account status."
+        return f"OpenAI AuthenticationError on model {model_to_use}: Incorrect API key or billing issue."
     except openai.RateLimitError:
-        return "OpenAI RateLimitError: You have exceeded your current quota. Please check your OpenAI plan and billing details."
+        return f"OpenAI RateLimitError on model {model_to_use}: You have exceeded your current quota."
+    except openai.NotFoundError: # Specific error if model doesn't exist or user doesn't have access
+         return f"OpenAI NotFoundError: The model '{model_to_use}' was not found or you do not have access."
     except openai.APIConnectionError as e:
-        return f"OpenAI APIConnectionError: Could not connect to OpenAI. Details: {e}"
+        return f"OpenAI APIConnectionError on model {model_to_use}: Could not connect. Details: {e}"
     except Exception as e:
-        return f"An unexpected error occurred with OpenAI: {e}"
+        return f"An unexpected error occurred with OpenAI model {model_to_use}: {e}"
 
+# Update the __main__ block:
 if __name__ == '__main__':
     print("Welcome to the OpenAI API Client!")
     print("---------------------------------")
     print("Important: Make sure you have configured your OpenAI API key.")
+    # ... (rest of existing API key instructions) ...
     print("You can set it as an environment variable 'OPENAI_API_KEY' (recommended),")
     print("or directly edit the 'OPENAI_API_KEY_DIRECT' variable in this script.")
     print("Get an API key from https://platform.openai.com/account/api-keys")
     print("---------------------------------")
 
-    # Check if key might be configured
     configured_check = os.getenv('OPENAI_API_KEY') or OPENAI_API_KEY_DIRECT != 'YOUR_OPENAI_API_KEY'
 
     if not configured_check:
-        print("Please configure your OpenAI API key before running.")
+        print("Please configure your OpenAI API key before running tests.")
     else:
-        print(f"Using model: {MODEL_NAME}")
-        print("\nThis script will now send a test prompt to the OpenAI API.")
+        print(f"--- Testing Model Listing (OpenAI) ---")
+        available_models = list_openai_models()
+        if available_models and available_models[0]['id'] not in ['ERROR', 'NO_MODELS', 'AUTH_ERROR', 'API_KEY_NOT_CONFIGURED']:
+            print("Available and suitable OpenAI GPT models:")
+            for model_info in available_models:
+                print(f"  ID: {model_info['id']}")
+        else:
+            print(f"Could not retrieve OpenAI model list or no suitable models found. Reason: {available_models[0]['display_name'] if available_models else 'Unknown'}")
+        print("------------------------------------")
 
+        print(f"\n--- Testing Response Generation (OpenAI) ---")
+        # Use the global MODEL_NAME as the default for this direct script test
+        print(f"Using model (for get_openai_response test): {MODEL_NAME}")
         test_prompt = "What is the capital of France?"
-        print(f"\nSending prompt: \"{test_prompt}\"")
+        print(f"Sending prompt: \"{test_prompt}\"")
 
-        # Get the response
-        api_response = get_openai_response(test_prompt)
+        # Pass the model_to_use argument
+        api_response = get_openai_response(test_prompt, model_to_use=MODEL_NAME)
 
         print("\nResponse from OpenAI (ChatGPT):")
         print(api_response)
+        print("--------------------------------------")
 
-        print("\n--- Test Complete ---")
-        print("You can now import the 'get_openai_response' function in your Flask app.")
+    print("\n--- Test Complete ---")
+    print("You can now import functions from this client in your Flask app.")

@@ -1,6 +1,6 @@
 # Uday's AI Agents
 
-This application, "Uday's AI Agents," provides a simple, dark-themed web interface to query Google Gemini, OpenAI (ChatGPT), and Anthropic Claude APIs with a single prompt. Users can also select from available Gemini models. It then displays the responses from each AI side-by-side in a clean, professional layout with a compact input header.
+This application, "Uday's AI Agents," provides a simple, dark-themed web interface to query Google Gemini, OpenAI (ChatGPT), and Anthropic Claude APIs with a single prompt. Users can select from available models for both Gemini and OpenAI. It then displays the responses from each AI side-by-side in a clean, professional layout with a compact input header.
 
 ## Prerequisites
 
@@ -84,6 +84,11 @@ This application, "Uday's AI Agents," provides a simple, dark-themed web interfa
         *   If there's an issue fetching the list (e.g., API key problem), an error message will appear next to the dropdown, and it may show a default model.
         *   Select your desired Gemini model from this list. The chosen model will be used for the next query you make.
         *   The Gemini response box header (e.g., "Gemini (gemini-1.5-flash-latest)") will reflect the model used for the query.
+    *   **OpenAI Model Selection:** Similarly, within the header of the OpenAI response box, below the 'OpenAI' label, you will find a dropdown menu for selecting OpenAI models.
+        *   This dropdown is populated dynamically with available GPT models suitable for chat (e.g., gpt-3.5-turbo, gpt-4 series), fetched when the page loads if your OpenAI API key is correctly configured. A suitable default is pre-selected.
+        *   If there's an issue fetching the list (e.g., API key problem, authentication error), an error message will appear next to the dropdown, and it may show a default model.
+        *   Select your desired OpenAI model from this list. This model will be used for the OpenAI query.
+        *   The OpenAI response box header (e.g., "OpenAI (gpt-3.5-turbo)") will reflect the model used.
     *   Enter your common prompt directly into the large text area at the top of the page (it uses placeholder text like "Enter your common prompt for all AIs here..." for guidance). The "Ask my AIs" button is located to the right of this input area.
     *   Click "Ask my AIs".
     *   If there are errors (e.g., an API key issue for a specific service), they will appear as temporary toast notifications, typically at the bottom-right of the screen.
@@ -93,7 +98,7 @@ This application, "Uday's AI Agents," provides a simple, dark-themed web interfa
 
 *   `app.py`: Flask web server.
 *   `gemini_client.py`: Client for Google Gemini API (includes model listing).
-*   `openai_client.py`: Client for OpenAI API.
+*   `openai_client.py`: Client for OpenAI API (includes model listing).
 *   `claude_client.py`: Client for Anthropic Claude API.
 *   `templates/index.html`: HTML template for the UI.
 *   `static/script.js`: JavaScript for UI interactions (modal, toast notifications).
