@@ -71,3 +71,20 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// --- OpenAI Model Selector Sync ---
+document.addEventListener('DOMContentLoaded', function() {
+    const visualOpenAISelect = document.getElementById('openai_model_select_visual');
+    const hiddenOpenAIInput = document.getElementById('openai_model_select_hidden');
+
+    if (visualOpenAISelect && hiddenOpenAIInput) {
+        // Initialize hidden field with the current value of the visual select
+        // (which should be correctly pre-selected by Jinja via current_openai_model)
+        hiddenOpenAIInput.value = visualOpenAISelect.value;
+
+        // Add event listener for changes on the visual select
+        visualOpenAISelect.addEventListener('change', function() {
+            hiddenOpenAIInput.value = this.value;
+        });
+    }
+});

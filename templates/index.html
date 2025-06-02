@@ -68,7 +68,26 @@
 
             {# OpenAI Response Area - Always Visible #}
             <div class="response-area">
-                <h3><span class="ai-label openai-label">OpenAI</span> ({{ openai_model_display | replace("models/", "") }})</h3>
+                <div class="response-header">
+                    <h3><span class="ai-label openai-label">OpenAI</span> ({{ current_openai_model | replace("models/", "") }})</h3>
+                    <div class="model-selector-group">
+                        <label for="openai_model_select_visual">Model:</label>
+                        <select name="openai_model_select_visual" id="openai_model_select_visual" data-current-model="{{ current_openai_model }}">
+                            {% if openai_models %}
+                                {% for model in openai_models %}
+                                    <option value="{{ model.id }}" {% if model.id == current_openai_model %}selected{% endif %}>
+                                        {{ model.display_name }} {# OpenAI IDs are usually display names #}
+                                    </option>
+                                {% endfor %}
+                            {% else %}
+                                <option value="{{ DEFAULT_OPENAI_MODEL if DEFAULT_OPENAI_MODEL else '' }}">Default (Error loading list)</option>
+                            {% endif %}
+                        </select>
+                        {% if openai_list_error %}
+                            <span class="error-text model-list-error-inline">{{ openai_list_error }}</span>
+                        {% endif %}
+                    </div>
+                </div>
                 {% if openai_response and not "Error:" in openai_response and not "An unexpected error occurred with OpenAI:" in openai_response and not "OpenAI AuthenticationError:" in openai_response and not "OpenAI RateLimitError:" in openai_response and not "OpenAI APIConnectionError:" in openai_response and not "API key not configured" in openai_response %}
                     <p>{{ openai_response }}</p>
                 {% elif openai_response %} {# Implies it's an error message from the client or app.py #}
