@@ -12,12 +12,13 @@ ANTHROPIC_API_KEY_DIRECT = 'YOUR_ANTHROPIC_API_KEY' # Replace if not using envir
 # Using Claude 3 Haiku for cost-effectiveness and speed.
 MODEL_NAME = 'claude-3-haiku-20240307'
 
-def get_claude_response(prompt: str, api_key: str = None) -> str:
+def get_claude_response(prompt: str, model_to_use: str, api_key: str = None) -> str:
     """
-    Sends a prompt to the Anthropic Claude API and returns the text response.
+    Sends a prompt to the specified Anthropic Claude API model and returns the text response.
 
     Args:
         prompt: The text prompt to send to the model.
+        model_to_use: The specific Claude model ID to use (e.g., 'claude-3-haiku-20240307').
         api_key: Optional. Your Anthropic API key. If not provided,
                  the function will try to use the ANTHROPIC_API_KEY environment
                  variable or the ANTHROPIC_API_KEY_DIRECT variable set in this file.
@@ -26,19 +27,26 @@ def get_claude_response(prompt: str, api_key: str = None) -> str:
         The model's text response, or an error message if something went wrong.
     """
     client = None
+    if not model_to_use:
+        return "Error: No model specified for Claude."
+
     try:
+        current_api_key = None # Determine API key to use
         if api_key:
-            client = anthropic.Anthropic(api_key=api_key)
+            current_api_key = api_key
         elif os.getenv('ANTHROPIC_API_KEY'):
-            client = anthropic.Anthropic() # Uses environment variable ANTHROPIC_API_KEY
+            current_api_key = os.getenv('ANTHROPIC_API_KEY')
         elif ANTHROPIC_API_KEY_DIRECT != 'YOUR_ANTHROPIC_API_KEY':
-            client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY_DIRECT)
-        else:
-            return "Error: Anthropic API key not configured. Please set the ANTHROPIC_API_KEY environment variable or update ANTHROPIC_API_KEY_DIRECT in claude_client.py."
+            current_api_key = ANTHROPIC_API_KEY_DIRECT
+
+        if not current_api_key:
+             return "Error: Anthropic API key not configured. Please set the ANTHROPIC_API_KEY environment variable or update ANTHROPIC_API_KEY_DIRECT in claude_client.py."
+
+        client = anthropic.Anthropic(api_key=current_api_key)
 
         # Create a message request
         response = client.messages.create(
-            model=MODEL_NAME,
+            model=model_to_use, # Use the passed model_to_use
             max_tokens=2048, # Max tokens for the response
             messages=[
                 {"role": "user", "content": prompt}
@@ -57,13 +65,15 @@ def get_claude_response(prompt: str, api_key: str = None) -> str:
             return "Error: No content received from Claude or unexpected format."
 
     except anthropic.AuthenticationError as e:
-        return f"Anthropic AuthenticationError: {e.body.get('error', {}).get('message', 'Please check your Anthropic API key and account status.')}"
+        error_message = e.body.get('error', {}).get('message', 'Please check your Anthropic API key and account status.')
+        return f"Anthropic AuthenticationError on model {model_to_use}: {error_message}"
     except anthropic.RateLimitError as e:
-        return f"Anthropic RateLimitError: {e.body.get('error', {}).get('message', 'You have exceeded your current quota. Please check your Anthropic plan and billing details.')}"
+        error_message = e.body.get('error', {}).get('message', 'You have exceeded your current quota.')
+        return f"Anthropic RateLimitError on model {model_to_use}: {error_message}"
     except anthropic.APIConnectionError as e:
-        return f"Anthropic APIConnectionError: Could not connect to Anthropic. Details: {e}"
+        return f"Anthropic APIConnectionError on model {model_to_use}: Could not connect to Anthropic. Details: {e}"
     except Exception as e:
-        return f"An unexpected error occurred with Anthropic: {e}"
+        return f"An unexpected error occurred with Anthropic model {model_to_use}: {e}"
 
 if __name__ == '__main__':
     print("Welcome to the Anthropic Claude API Client!")
@@ -79,13 +89,13 @@ if __name__ == '__main__':
     if not configured_check:
         print("Please configure your Anthropic API key before running.")
     else:
-        print(f"Using model: {MODEL_NAME}")
+        print(f"Using model (for get_claude_response test): {MODEL_NAME}")
         print("\nThis script will now send a test prompt to the Anthropic Claude API.")
 
         test_prompt = "Explain the concept of 'emergence' in complex systems in a few sentences."
         print(f"\nSending prompt: \"{test_prompt}\"")
 
-        api_response = get_claude_response(test_prompt)
+        api_response = get_claude_response(test_prompt, model_to_use=MODEL_NAME)
 
         print("\nResponse from Anthropic Claude:")
         print(api_response)
