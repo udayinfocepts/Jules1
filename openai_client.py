@@ -39,13 +39,24 @@ def list_openai_models(api_key: str = None) -> list:
         processed_models = []
         if models_list_data:
             for model in models_list_data.data: # .data contains the list of Model objects
-                # Filter for GPT models suitable for chat, owned by openai or openai-org primarily
-                # Exclude models containing 'vision', 'image', 'audio', 'embed', 'instruct', 'davinci', 'babbage', 'curie', 'ada' unless it's a gpt model
-                # This tries to get general purpose chat models like gpt-3.5-turbo, gpt-4, etc.
+                # Revised filter:
                 model_id_lower = model.id.lower()
-                if model_id_lower.startswith('gpt-') and \
-                   not any(term in model_id_lower for term in ['instruct', 'vision', 'image', 'audio', 'embed']) and \
-                   ('openai' in model.owned_by.lower() or 'openai-org' in model.owned_by.lower()): # Check ownership to prefer base models
+                is_likely_chat_model = model_id_lower.startswith('gpt-')
+
+                # Terms that usually indicate non-chat or highly specialized models we might want to exclude
+                # 'instruct' can sometimes be chat-like, but often refers to older completion models.
+                # We'll keep 'instruct' in the blacklist for now to prefer pure chat models like gpt-3.5-turbo, gpt-4.
+                # If too few models appear, 'instruct' could be removed from this blacklist.
+                non_chat_terms = ['vision', 'image', 'audio', 'embed', 'instruct', 'davinci', 'babbage', 'curie', 'ada']
+
+                is_not_specialized_non_chat = not any(term in model_id_lower for term in non_chat_terms)
+
+                # Consider ownership if we want to primarily list base models from OpenAI,
+                # but removing it might show more fine-tuned models if the user has them.
+                # For now, let's try without the strict 'owned_by' check to be more inclusive.
+                # is_openai_owned = 'openai' in model.owned_by.lower() or 'openai-org' in model.owned_by.lower()
+
+                if is_likely_chat_model and is_not_specialized_non_chat:
                     processed_models.append({'id': model.id, 'display_name': model.id})
 
         if not processed_models:
