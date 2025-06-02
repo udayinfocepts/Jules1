@@ -45,7 +45,7 @@
 
     <div class="main-content-area container"> <!-- Main content container for responses -->
         <!-- Error display will be handled by toast notifications (step 3) -->
-        {% if error and not toast_errors_implemented_yet %}
+        {% if error and not toast_errors_implemented_yet %} 
         <!-- <div class="error-message">
             <strong>Errors:</strong><br>{{ error }}
         </div> -->
@@ -74,13 +74,16 @@
                         {% endif %}
                     </div>
                 </div>
-                {% if gemini_response and not "Error:" in gemini_response and not "An error occurred:" in gemini_response and not "API key not configured" in gemini_response %}
-                    <p>{{ gemini_response }}</p>
-                {% elif gemini_response %} {# Implies it's an error message from the client or app.py #}
-                    <p class="error-text">{{ gemini_response }}</p>
-                {% else %}
-                    <p class="placeholder-text">Response from Gemini will appear here once a prompt is submitted.</p>
-                {% endif %}
+                {# Gemini Response Content Part - New Structure #}
+                <p class="ai-response-content {% if not (gemini_response and not ("Error:" in gemini_response or "An error occurred:" in gemini_response or "API key not configured" in gemini_response or "No model specified" in gemini_response)) %}hidden{% endif %}">
+                    {{ gemini_response if (gemini_response and not ("Error:" in gemini_response or "An error occurred:" in gemini_response or "API key not configured" in gemini_response or "No model specified" in gemini_response)) else "" }}
+                </p>
+                <p class="error-text ai-response-error-text {% if not (gemini_response and ("Error:" in gemini_response or "An error occurred:" in gemini_response or "API key not configured" in gemini_response or "No model specified" in gemini_response)) %}hidden{% endif %}">
+                    {{ gemini_response if (gemini_response and ("Error:" in gemini_response or "An error occurred:" in gemini_response or "API key not configured" in gemini_response or "No model specified" in gemini_response)) else "" }}
+                </p>
+                <p class="placeholder-text {% if gemini_response %}hidden{% endif %}">
+                    Response from Gemini will appear here once a prompt is submitted.
+                </p>
             </div>
 
             {# OpenAI Response Area - Always Visible #}
@@ -105,15 +108,18 @@
                         {% endif %}
                     </div>
                 </div>
-                {% if openai_response and not "Error:" in openai_response and not "An unexpected error occurred with OpenAI:" in openai_response and not "OpenAI AuthenticationError:" in openai_response and not "OpenAI RateLimitError:" in openai_response and not "OpenAI APIConnectionError:" in openai_response and not "API key not configured" in openai_response %}
-                    <p>{{ openai_response }}</p>
-                {% elif openai_response %} {# Implies it's an error message from the client or app.py #}
-                    <p class="error-text">{{ openai_response }}</p>
-                {% else %}
-                    <p class="placeholder-text">Response from OpenAI will appear here once a prompt is submitted.</p>
-                {% endif %}
+                {# OpenAI Response Content Part - New Structure #}
+                <p class="ai-response-content {% if not (openai_response and not ("Error:" in openai_response or "An unexpected error occurred with OpenAI:" in openai_response or "OpenAI AuthenticationError:" in openai_response or "OpenAI RateLimitError:" in openai_response or "OpenAI APIConnectionError:" in openai_response or "API key not configured" in openai_response or "No model specified" in openai_response)) %}hidden{% endif %}">
+                    {{ openai_response if (openai_response and not ("Error:" in openai_response or "An unexpected error occurred with OpenAI:" in openai_response or "OpenAI AuthenticationError:" in openai_response or "OpenAI RateLimitError:" in openai_response or "OpenAI APIConnectionError:" in openai_response or "API key not configured" in openai_response or "No model specified" in openai_response)) else "" }}
+                </p>
+                <p class="error-text ai-response-error-text {% if not (openai_response and ("Error:" in openai_response or "An unexpected error occurred with OpenAI:" in openai_response or "OpenAI AuthenticationError:" in openai_response or "OpenAI RateLimitError:" in openai_response or "OpenAI APIConnectionError:" in openai_response or "API key not configured" in openai_response or "No model specified" in openai_response)) %}hidden{% endif %}">
+                    {{ openai_response if (openai_response and ("Error:" in openai_response or "An unexpected error occurred with OpenAI:" in openai_response or "OpenAI AuthenticationError:" in openai_response or "OpenAI RateLimitError:" in openai_response or "OpenAI APIConnectionError:" in openai_response or "API key not configured" in openai_response or "No model specified" in openai_response)) else "" }}
+                </p>
+                <p class="placeholder-text {% if openai_response %}hidden{% endif %}">
+                    Response from OpenAI will appear here once a prompt is submitted.
+                </p>
             </div>
-
+            
             {# Claude Response Area - Always Visible #}
             <div class="response-area" id="claudeResponseArea">
                 <div class="response-header">
@@ -137,13 +143,16 @@
                         {% endif %}
                     </div>
                 </div>
-                {% if claude_response and not "Error:" in claude_response and not "An unexpected error occurred with Anthropic:" in claude_response and not "Anthropic AuthenticationError:" in claude_response and not "Anthropic RateLimitError:" in claude_response and not "Anthropic APIConnectionError:" in claude_response and not "API key not configured" in claude_response %}
-                    <p>{{ claude_response }}</p>
-                {% elif claude_response %} {# Implies it's an error message from the client or app.py #}
-                    <p class="error-text">{{ claude_response }}</p>
-                {% else %}
-                    <p class="placeholder-text">Response from Claude will appear here once a prompt is submitted.</p>
-                {% endif %}
+                {# Claude Response Content Part - New Structure #}
+                <p class="ai-response-content {% if not (claude_response and not ("Error:" in claude_response or "An unexpected error occurred with Anthropic:" in claude_response or "Anthropic AuthenticationError:" in claude_response or "Anthropic RateLimitError:" in claude_response or "Anthropic APIConnectionError:" in claude_response or "API key not configured" in claude_response or "No model specified" in claude_response)) %}hidden{% endif %}">
+                    {{ claude_response if (claude_response and not ("Error:" in claude_response or "An unexpected error occurred with Anthropic:" in claude_response or "Anthropic AuthenticationError:" in claude_response or "Anthropic RateLimitError:" in claude_response or "Anthropic APIConnectionError:" in claude_response or "API key not configured" in claude_response or "No model specified" in claude_response)) else "" }}
+                </p>
+                <p class="error-text ai-response-error-text {% if not (claude_response and ("Error:" in claude_response or "An unexpected error occurred with Anthropic:" in claude_response or "Anthropic AuthenticationError:" in claude_response or "Anthropic RateLimitError:" in claude_response or "Anthropic APIConnectionError:" in claude_response or "API key not configured" in claude_response or "No model specified" in claude_response)) %}hidden{% endif %}">
+                    {{ claude_response if (claude_response and ("Error:" in claude_response or "An unexpected error occurred with Anthropic:" in claude_response or "Anthropic AuthenticationError:" in claude_response or "Anthropic RateLimitError:" in claude_response or "Anthropic APIConnectionError:" in claude_response or "API key not configured" in claude_response or "No model specified" in claude_response)) else "" }}
+                </p>
+                <p class="placeholder-text {% if claude_response %}hidden{% endif %}">
+                    Response from Claude will appear here once a prompt is submitted.
+                </p>
             </div>
         </div>
 
@@ -152,21 +161,21 @@
             <div class="modal-content">
                 <span class="close-modal-button">&times;</span>
                 <h4>API Configuration Status:</h4>
-                <p>Gemini ({{ gemini_model }}):
+                <p>Gemini ({{ gemini_model }}): 
                     {% if gemini_configured %}
                         <span class="config-ok">Configured</span>
                     {% else %}
                         <span class="config-nok">NOT CONFIGURED</span> (Edit <code>gemini_client.py</code>)
                     {% endif %}
                 </p>
-                <p>OpenAI ({{ openai_model }}):
+                <p>OpenAI ({{ openai_model }}): 
                     {% if openai_configured %}
                         <span class="config-ok">Configured</span>
                     {% else %}
                         <span class="config-nok">NOT CONFIGURED</span> (Edit <code>openai_client.py</code> or set <code>OPENAI_API_KEY</code> env var)
                     {% endif %}
                 </p>
-                <p>Claude ({{ claude_model }}):
+                <p>Claude ({{ claude_model }}): 
                     {% if claude_configured %}
                         <span class="config-ok">Configured</span>
                     {% else %}
@@ -185,12 +194,19 @@
     <script>
     {% if new_qna_set_to_save and prompt_text %} // Only save if flag is true and prompt exists
         document.addEventListener('DOMContentLoaded', function() {
-            // Data is directly available from Jinja variables passed to this specific render.
-            // The responses and models used are already in the template context.
+            console.log('Attempting to create qnaSetToSave object. Data from Flask:'); // DEBUG
+            console.log('Prompt for history:', {{ prompt_text | tojson }}); // DEBUG
+            console.log('Gemini response for history:', {{ gemini_response | tojson }}); // DEBUG
+            console.log('Gemini model for history:', {{ current_gemini_model | tojson }}); // DEBUG
+            console.log('OpenAI response for history:', {{ openai_response | tojson }}); // DEBUG
+            console.log('OpenAI model for history:', {{ current_openai_model | tojson }}); // DEBUG
+            console.log('Claude response for history:', {{ claude_response | tojson }}); // DEBUG
+            console.log('Claude model for history:', {{ current_claude_model | tojson }}); // DEBUG
+
             const qnaSetToSave = {
                 id: new Date().getTime().toString(), // This doesn't need tojson as it's not from Flask context directly here
                 prompt: {{ prompt_text | tojson }},
-                gemini_response: {{ gemini_response | tojson }},
+                gemini_response: {{ gemini_response | tojson }}, 
                 gemini_model: {{ current_gemini_model | tojson }},
                 openai_response: {{ openai_response | tojson }},
                 openai_model: {{ current_openai_model | tojson }},
@@ -198,13 +214,16 @@
                 claude_model: {{ current_claude_model | tojson }},
                 timestamp: new Date().toISOString() // This is JS-generated, no filter needed
             };
-
+            console.log('Constructed qnaSetToSave:', qnaSetToSave); // DEBUG
+            
             if (qnaSetToSave.prompt) {
+                console.log('Calling saveQASet with constructed object.'); // DEBUG
                 saveQASet(qnaSetToSave); // Assumes saveQASet is globally available from script.js
-
+                
                 const historySidebar = document.getElementById('historySidebar');
                 if (historySidebar && historySidebar.classList.contains('open')) {
                     if (typeof renderHistorySidebar === 'function') { // Check if function exists
+                        console.log('Calling renderHistorySidebar after saveQASet from index.html script.'); // DEBUG
                         renderHistorySidebar();
                     }
                 }

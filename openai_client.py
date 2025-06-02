@@ -19,7 +19,7 @@ def list_openai_models(api_key: str = None) -> list:
 
     Args:
         api_key: Optional. Your OpenAI API key.
-
+    
     Returns:
         A list of dictionaries, where each has 'id' and 'display_name' (which is also the id).
         Returns a list with an error indicator if an error occurs.
@@ -47,7 +47,7 @@ def list_openai_models(api_key: str = None) -> list:
                 # 'instruct' can sometimes be chat-like, but often refers to older completion models.
                 # We'll keep 'instruct' in the blacklist for now to prefer pure chat models like gpt-3.5-turbo, gpt-4.
                 # If too few models appear, 'instruct' could be removed from this blacklist.
-                non_chat_terms = ['vision', 'image', 'audio', 'embed', 'instruct', 'davinci', 'babbage', 'curie', 'ada']
+                non_chat_terms = ['vision', 'image', 'audio', 'embed', 'instruct', 'davinci', 'babbage', 'curie', 'ada'] 
 
                 is_not_specialized_non_chat = not any(term in model_id_lower for term in non_chat_terms)
 
@@ -58,10 +58,10 @@ def list_openai_models(api_key: str = None) -> list:
 
                 if is_likely_chat_model and is_not_specialized_non_chat:
                     processed_models.append({'id': model.id, 'display_name': model.id})
-
+        
         if not processed_models:
             return [{'id': 'NO_MODELS', 'display_name': 'No suitable GPT models found'}]
-
+            
         # Sort models, perhaps to put gpt-4 versions before gpt-3.5 if desired, or just alphabetically
         processed_models.sort(key=lambda x: x['id'], reverse=True) # Simple sort, gpt-4 often appears before gpt-3.5
 
@@ -87,7 +87,7 @@ def get_openai_response(prompt: str, model_to_use: str, api_key: str = None) -> 
     client = None
     if not model_to_use:
         return "Error: No model specified for OpenAI."
-
+        
     try:
         if api_key:
             client = openai.OpenAI(api_key=api_key)
@@ -149,13 +149,13 @@ if __name__ == '__main__':
 
         print(f"\n--- Testing Response Generation (OpenAI) ---")
         # Use the global MODEL_NAME as the default for this direct script test
-        print(f"Using model (for get_openai_response test): {MODEL_NAME}")
+        print(f"Using model (for get_openai_response test): {MODEL_NAME}") 
         test_prompt = "What is the capital of France?"
         print(f"Sending prompt: \"{test_prompt}\"")
-
+        
         # Pass the model_to_use argument
-        api_response = get_openai_response(test_prompt, model_to_use=MODEL_NAME)
-
+        api_response = get_openai_response(test_prompt, model_to_use=MODEL_NAME) 
+        
         print("\nResponse from OpenAI (ChatGPT):")
         print(api_response)
         print("--------------------------------------")

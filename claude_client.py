@@ -22,14 +22,14 @@ def list_claude_models(api_key: str = None) -> list:
     static_models = [
         {'id': 'claude-3-haiku-20240307', 'display_name': 'Claude 3 Haiku'},
         {'id': 'claude-3-sonnet-20240229', 'display_name': 'Claude 3 Sonnet'},
-        {'id': 'claude-instant-1.2', 'display_name': 'Claude Instant 1.2'}
+        {'id': 'claude-instant-1.2', 'display_name': 'Claude Instant 1.2'} 
         # Add claude-3-opus-20240229 if desired, but it's more expensive
     ]
     # To mimic the structure of dynamic listers in case of API key issues (though not applicable here for static)
     # This structure helps app.py handle it consistently if it expects an error dict.
     # For a static list, we assume API key configuration is not directly tied to listing.
     # However, if ANTHROPIC_API_KEY_DIRECT is not set, perhaps return an error indicator.
-
+    
     # For simplicity with a static list, we'll just return the list directly.
     # If app.py needs to check configuration before showing even static models,
     # that logic would reside in app.py based on check_claude_config().
@@ -61,7 +61,7 @@ def get_claude_response(prompt: str, model_to_use: str, api_key: str = None) -> 
             current_api_key = os.getenv('ANTHROPIC_API_KEY')
         elif ANTHROPIC_API_KEY_DIRECT != 'YOUR_ANTHROPIC_API_KEY':
             current_api_key = ANTHROPIC_API_KEY_DIRECT
-
+        
         if not current_api_key:
              return "Error: Anthropic API key not configured. Please set the ANTHROPIC_API_KEY environment variable or update ANTHROPIC_API_KEY_DIRECT in claude_client.py."
 
@@ -75,7 +75,7 @@ def get_claude_response(prompt: str, model_to_use: str, api_key: str = None) -> 
                 {"role": "user", "content": prompt}
             ]
         )
-
+        
         # The response structure for Claude API provides content as a list of blocks.
         # We need to extract the text from the first text block if available.
         if response.content and isinstance(response.content, list) and len(response.content) > 0:
@@ -124,12 +124,12 @@ if __name__ == '__main__':
 
         print(f"\n--- Testing Response Generation (Claude) ---")
         # Use the global MODEL_NAME (e.g., claude-3-haiku-20240307) as the default for this direct script test
-        print(f"Using model (for get_claude_response test): {MODEL_NAME}")
+        print(f"Using model (for get_claude_response test): {MODEL_NAME}") 
         test_prompt = "Explain the concept of 'emergence' in complex systems in a few sentences."
         print(f"Sending prompt: \"{test_prompt}\"")
-
-        api_response = get_claude_response(test_prompt, model_to_use=MODEL_NAME)
-
+        
+        api_response = get_claude_response(test_prompt, model_to_use=MODEL_NAME) 
+        
         print("\nResponse from Anthropic Claude:")
         print(api_response)
         print("--------------------------------------")
