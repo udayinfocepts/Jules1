@@ -1,6 +1,6 @@
 # Uday's AI Agents
 
-This application, "Uday's AI Agents," provides a simple, dark-themed web interface to query Google Gemini, OpenAI (ChatGPT), and Anthropic Claude APIs with a single prompt. Users can select from available models for Gemini, OpenAI, and Claude. It then displays the responses from each AI side-by-side in a clean, professional layout with a compact input header.
+This application, "Uday's AI Agents," provides a simple, dark-themed web interface to query Google Gemini, OpenAI (ChatGPT), and Anthropic Claude APIs with a single prompt. Users can select from available models for Gemini, OpenAI, and Claude. It then displays the responses from each AI side-by-side in a clean, professional layout with a compact input header and a persistent Q&A history feature.
 
 ## Prerequisites
 
@@ -97,7 +97,25 @@ This application, "Uday's AI Agents," provides a simple, dark-themed web interfa
     *   Enter your common prompt directly into the large text area at the top of the page (it uses placeholder text like "Enter your common prompt for all AIs here..." for guidance). The "Ask my AIs" button is located to the right of this input area.
     *   Click "Ask my AIs".
     *   If there are errors (e.g., an API key issue for a specific service), they will appear as temporary toast notifications, typically at the bottom-right of the screen.
-    *   Responses from Gemini (using the selected model), OpenAI, and Claude (if configured and successful) will be displayed in their respective static content boxes, each featuring a styled label.
+    *   Responses from Gemini (using the selected model), OpenAI (using selected model), and Claude (using selected model) will be displayed in their respective static content boxes, each featuring a styled label.
+    *   Each successful Q&A interaction is automatically saved to your browser's history.
+
+## Q&A History Feature
+
+The application includes a persistent Q&A history feature that allows you to review and reload past interactions.
+
+*   **Accessing History:** A "📜 History" button is located in the top header area (next to the API status gear icon). Clicking this button toggles a sidebar on the left side of the screen.
+*   **Sidebar Content:** The history sidebar lists your past Q&A sessions. Each item typically shows:
+    *   A snippet of your original prompt.
+    *   The date and time of the interaction.
+*   **Loading History:** Clicking on an item in the history sidebar will load that specific Q&A set back into the main interface:
+    *   The original prompt will populate the main input textarea.
+    *   The AI responses (or any errors they returned for that query) will fill their respective response boxes.
+    *   The model selector dropdowns for Gemini, OpenAI, and Claude will update to reflect the models that were used for that historical query.
+    *   The sidebar will typically remain open, and the selected history item will be highlighted.
+*   **Data Storage:** Your Q&A history is saved automatically in your browser's Local Storage. This means it persists when you close the browser or restart your computer, but it is specific to the browser and computer you are using. It is not synced across different browsers or devices.
+*   **History Limits:** The history is currently set to store up to the 50 most recent Q&A interactions. When this limit is reached, the oldest entries will be automatically removed to make space for new ones.
+*   **Clearing History:** A "Clear All History" button is available at the bottom of the history sidebar. Clicking this will prompt you for confirmation. If confirmed, all stored Q&A history for this application will be permanently deleted from your browser's Local Storage. The sidebar will then update to show "No history yet."
 
 ## Project Structure
 
@@ -106,7 +124,7 @@ This application, "Uday's AI Agents," provides a simple, dark-themed web interfa
 *   `openai_client.py`: Client for OpenAI API (includes model listing).
 *   `claude_client.py`: Client for Anthropic Claude API (provides a model list and uses selected model).
 *   `templates/index.html`: HTML template for the UI.
-*   `static/script.js`: JavaScript for UI interactions (modal, toast notifications, model sync).
+*   `static/script.js`: JavaScript for UI interactions (modal, toast notifications, model sync, history sidebar management).
 *   `static/style.css`: CSS for styling the application.
 *   `requirements.txt`: Python dependencies.
 *   `README.md`: This file.
