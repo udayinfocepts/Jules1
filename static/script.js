@@ -72,6 +72,23 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// --- Claude Model Selector Sync ---
+document.addEventListener('DOMContentLoaded', function() {
+    const visualClaudeSelect = document.getElementById('claude_model_select_visual');
+    const hiddenClaudeInput = document.getElementById('claude_model_select_hidden');
+
+    if (visualClaudeSelect && hiddenClaudeInput) {
+        // Initialize hidden field with the current value of the visual select
+        // (which should be correctly pre-selected by Jinja via current_claude_model)
+        hiddenClaudeInput.value = visualClaudeSelect.value;
+
+        // Add event listener for changes on the visual select
+        visualClaudeSelect.addEventListener('change', function() {
+            hiddenClaudeInput.value = this.value;
+        });
+    }
+});
+
 // --- OpenAI Model Selector Sync ---
 document.addEventListener('DOMContentLoaded', function() {
     const visualOpenAISelect = document.getElementById('openai_model_select_visual');

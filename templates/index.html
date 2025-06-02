@@ -99,7 +99,27 @@
 
             {# Claude Response Area - Always Visible #}
             <div class="response-area">
-                <h3><span class="ai-label claude-label">Claude</span> ({{ claude_model_display | replace("models/", "") | replace("claude-3-haiku-","c3-haiku-") }})</h3>
+                <div class="response-header">
+                    <h3><span class="ai-label claude-label">Claude</span> ({{ current_claude_model | replace("models/", "") | replace("claude-3-haiku-","c3-haiku-") }})</h3>
+                    <div class="model-selector-group">
+                        <label for="claude_model_select_visual">Model:</label>
+                        <select name="claude_model_select_visual" id="claude_model_select_visual" data-current-model="{{ current_claude_model }}">
+                            {% if claude_models %}
+                                {% for model in claude_models %}
+                                    <option value="{{ model.id }}" {% if model.id == current_claude_model %}selected{% endif %}>
+                                        {{ model.display_name }}
+                                    </option>
+                                {% endfor %}
+                            {% else %}
+                                {# This case is less likely with a static list but good for robustness #}
+                                <option value="{{ DEFAULT_CLAUDE_MODEL if DEFAULT_CLAUDE_MODEL else '' }}">Default (Error loading list)</option>
+                            {% endif %}
+                        </select>
+                        {% if claude_list_error %} {# For "Not Configured" message primarily #}
+                            <span class="error-text model-list-error-inline">{{ claude_list_error }}</span>
+                        {% endif %}
+                    </div>
+                </div>
                 {% if claude_response and not "Error:" in claude_response and not "An unexpected error occurred with Anthropic:" in claude_response and not "Anthropic AuthenticationError:" in claude_response and not "Anthropic RateLimitError:" in claude_response and not "Anthropic APIConnectionError:" in claude_response and not "API key not configured" in claude_response %}
                     <p>{{ claude_response }}</p>
                 {% elif claude_response %} {# Implies it's an error message from the client or app.py #}

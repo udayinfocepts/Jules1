@@ -10,7 +10,30 @@ import os
 ANTHROPIC_API_KEY_DIRECT = 'YOUR_ANTHROPIC_API_KEY' # Replace if not using environment variable
 
 # Using Claude 3 Haiku for cost-effectiveness and speed.
-MODEL_NAME = 'claude-3-haiku-20240307'
+MODEL_NAME = 'claude-3-haiku-20240307' # Ensure this is one of the IDs from list_claude_models
+
+def list_claude_models(api_key: str = None) -> list:
+    """
+    Returns a static list of recommended Anthropic Claude models.
+    The api_key argument is included for consistency but not used in this static implementation.
+    """
+    # Static list of Claude models
+    # Ensure these model IDs are valid and generally available.
+    static_models = [
+        {'id': 'claude-3-haiku-20240307', 'display_name': 'Claude 3 Haiku'},
+        {'id': 'claude-3-sonnet-20240229', 'display_name': 'Claude 3 Sonnet'},
+        {'id': 'claude-instant-1.2', 'display_name': 'Claude Instant 1.2'}
+        # Add claude-3-opus-20240229 if desired, but it's more expensive
+    ]
+    # To mimic the structure of dynamic listers in case of API key issues (though not applicable here for static)
+    # This structure helps app.py handle it consistently if it expects an error dict.
+    # For a static list, we assume API key configuration is not directly tied to listing.
+    # However, if ANTHROPIC_API_KEY_DIRECT is not set, perhaps return an error indicator.
+
+    # For simplicity with a static list, we'll just return the list directly.
+    # If app.py needs to check configuration before showing even static models,
+    # that logic would reside in app.py based on check_claude_config().
+    return static_models
 
 def get_claude_response(prompt: str, model_to_use: str, api_key: str = None) -> str:
     """
@@ -87,18 +110,29 @@ if __name__ == '__main__':
     configured_check = os.getenv('ANTHROPIC_API_KEY') or ANTHROPIC_API_KEY_DIRECT != 'YOUR_ANTHROPIC_API_KEY'
 
     if not configured_check:
-        print("Please configure your Anthropic API key before running.")
+        print("Please configure your Anthropic API key before running full tests.")
     else:
-        print(f"Using model (for get_claude_response test): {MODEL_NAME}")
-        print("\nThis script will now send a test prompt to the Anthropic Claude API.")
+        print(f"--- Testing Model Listing (Claude) ---")
+        available_models = list_claude_models()
+        if available_models: # Should always be true for static list unless modified
+            print("Available Claude models (static list):")
+            for model_info in available_models:
+                print(f"  ID: {model_info['id']}, Name: {model_info['display_name']}")
+        else: # Should not happen with current static list logic
+            print("Could not retrieve Claude model list.")
+        print("------------------------------------")
 
+        print(f"\n--- Testing Response Generation (Claude) ---")
+        # Use the global MODEL_NAME (e.g., claude-3-haiku-20240307) as the default for this direct script test
+        print(f"Using model (for get_claude_response test): {MODEL_NAME}")
         test_prompt = "Explain the concept of 'emergence' in complex systems in a few sentences."
-        print(f"\nSending prompt: \"{test_prompt}\"")
+        print(f"Sending prompt: \"{test_prompt}\"")
 
         api_response = get_claude_response(test_prompt, model_to_use=MODEL_NAME)
 
         print("\nResponse from Anthropic Claude:")
         print(api_response)
+        print("--------------------------------------")
 
-        print("\n--- Test Complete ---")
-        print("You can now import the 'get_claude_response' function in your Flask app.")
+    print("\n--- Test Complete ---")
+    print("You can now import functions from this client in your Flask app.")
