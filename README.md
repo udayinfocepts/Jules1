@@ -116,6 +116,14 @@ The application includes a persistent Q&A history feature that allows you to rev
 *   **Data Storage:** Your Q&A history is saved automatically in your browser's Local Storage. This means it persists when you close the browser or restart your computer, but it is specific to the browser and computer you are using. It is not synced across different browsers or devices.
 *   **History Limits:** The history is currently set to store up to the 50 most recent Q&A interactions. When this limit is reached, the oldest entries will be automatically removed to make space for new ones.
 *   **Clearing History:** A "Clear All History" button is available at the bottom of the history sidebar. Clicking this will prompt you for confirmation. If confirmed, all stored Q&A history for this application will be permanently deleted from your browser's Local Storage. The sidebar will then update to show "No history yet."
+*   **Deleting Individual History Items:**
+    *   When you hover over a specific Q&A item in the history sidebar, a small '×' (delete) icon will appear on that item.
+    *   Clicking this '×' icon will remove the item from your history.
+*   **Undo Deletion:**
+    *   Immediately after deleting an item, a toast notification will appear at the bottom-right of the screen stating "Item deleted." and providing an "[Undo]" link.
+    *   You have approximately 7 seconds to click this "[Undo]" link.
+    *   If clicked, the deletion will be reversed, and the item will be restored to its original position in your history.
+    *   If you don't click "Undo" within the time limit, the item is permanently deleted (unless "Clear All History" was used, which is also permanent).
 
 ## Project Structure
 
